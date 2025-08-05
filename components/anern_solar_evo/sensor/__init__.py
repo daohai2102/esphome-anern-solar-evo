@@ -48,6 +48,9 @@ CONF_OUTPUT_MODE = "output_mode"
 CONF_BATTERY_REDISCHARGE_VOLTAGE = "battery_redischarge_voltage"
 CONF_PV_OK_CONDITION_FOR_PARALLEL = "pv_ok_condition_for_parallel"
 CONF_PV_POWER_BALANCE = "pv_power_balance"
+CONF_VOLTAGE_POINT_BACK_TO_UTILITY = "voltage_point_back_to_utility"
+CONF_GRID_TIE_CURRENT = "grid_tie_current"
+CONF_DUAL_OUTPUT_FUNCTIONAL_VOLTAGE_POINT = "dual_output_functional_voltage_point"
 
 CONF_GRID_VOLTAGE = "grid_voltage"
 CONF_GRID_FREQUENCY = "grid_frequency"
@@ -172,6 +175,21 @@ TYPES = {
     ),
     CONF_PV_POWER_BALANCE: sensor.sensor_schema(
         accuracy_decimals=1,
+    ),
+    CONF_VOLTAGE_POINT_BACK_TO_UTILITY: sensor.sensor_schema(
+      unit_of_measurement=UNIT_VOLT,
+      accuracy_decimals=1,
+      device_class=DEVICE_CLASS_VOLTAGE,
+    ),
+    CONF_GRID_TIE_CURRENT: sensor.sensor_schema(
+      unit_of_measurement=UNIT_AMPERE,
+      accuracy_decimals=1,
+      device_class=DEVICE_CLASS_CURRENT,
+    ),
+    CONF_DUAL_OUTPUT_FUNCTIONAL_VOLTAGE_POINT: sensor.sensor_schema(
+      unit_of_measurement=UNIT_VOLT,
+      accuracy_decimals=1,
+      device_class=DEVICE_CLASS_VOLTAGE,
     ),
     CONF_GRID_VOLTAGE: sensor.sensor_schema(
         unit_of_measurement=UNIT_VOLT,

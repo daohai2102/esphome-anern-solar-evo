@@ -110,6 +110,10 @@ class AnernSolarEvo : public uart::UARTDevice, public PollingComponent {
   ANERN_SOLAR_EVO_SENSOR(battery_redischarge_voltage, QPIRI, float)
   ANERN_SOLAR_EVO_SENSOR(pv_ok_condition_for_parallel, QPIRI, int)
   ANERN_SOLAR_EVO_SENSOR(pv_power_balance, QPIRI, int)
+  ANERN_SOLAR_EVO_SENSOR(voltage_point_back_to_utility, QPIRI, float) // need to check
+  ANERN_SOLAR_EVO_SENSOR(grid_tie_current, QPIRI, int)
+  ANERN_SOLAR_EVO_SENSOR(dual_output_functional_voltage_point, QPIRI, float)
+
 
   // QMOD values
   ANERN_SOLAR_EVO_VALUED_TEXT_SENSOR(device_mode, QMOD, char)
@@ -124,6 +128,9 @@ class AnernSolarEvo : public uart::UARTDevice, public PollingComponent {
   ANERN_SOLAR_EVO_BINARY_SENSOR(alarm_on_when_primary_source_interrupt, QFLAG, int)
   ANERN_SOLAR_EVO_BINARY_SENSOR(fault_code_record, QFLAG, int)
   ANERN_SOLAR_EVO_BINARY_SENSOR(power_saving, QFLAG, int)
+  ANERN_SOLAR_EVO_BINARY_SENSOR(data_log_popup, QFLAG, int) // can be alerm control or led light pattern -> need to check
+  ANERN_SOLAR_EVO_BINARY_SENSOR(battery_equalization, QFLAG, int) // can be equalization activated immediately -> need to check
+  ANERN_SOLAR_EVO_BINARY_SENSOR(dual_output, QFLAG, int) // equalization activated immediately -> need to check
 
   // QPIWS values
   ANERN_SOLAR_EVO_BINARY_SENSOR(warnings_present, QPIWS, bool)

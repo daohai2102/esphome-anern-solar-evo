@@ -171,6 +171,15 @@ void AnernSolarEvo::loop() {
         if (this->pv_power_balance_switch_) {
           this->pv_power_balance_switch_->publish_state(value_pv_power_balance_ == 1);
         }
+        if (this->voltage_point_back_to_utility_) {
+          this->voltage_point_back_to_utility_->publish_state(value_voltage_point_back_to_utility_);
+        }
+        if (this->grid_tie_current_) {
+          this->grid_tie_current_->publish_state(value_grid_tie_current_);
+        }
+        if (this->dual_output_functional_voltage_point_) {
+          this->dual_output_functional_voltage_point_->publish_state(value_dual_output_functional_voltage_point_);
+        }
         this->state_ = STATE_IDLE;
         break;
       case POLLING_QPIGS:
@@ -302,6 +311,15 @@ void AnernSolarEvo::loop() {
         if (this->power_saving_) {
           this->power_saving_->publish_state(value_power_saving_);
         }
+        if (this->data_log_popup_) {
+          this->data_log_popup_->publish_state(value_data_log_popup_);
+        }
+        if (this->battery_equalization_) {
+          this->battery_equalization_->publish_state(value_battery_equalization_);
+        }
+        if (this->dual_output_) {
+          this->dual_output_->publish_state(value_dual_output_);
+        }
         this->state_ = STATE_IDLE;
         break;
       case POLLING_QPIWS:
@@ -431,7 +449,7 @@ void AnernSolarEvo::loop() {
     switch (this->used_polling_commands_[this->last_polling_command_].identifier) {
       case POLLING_QPIRI:
         ESP_LOGD(TAG, "Decode QPIRI");
-        sscanf(tmp, "(%f %f %f %f %f %d %d %f %f %f %f %f %d %d %d %d %d %d %d %d %d %d %f %d %d",          // NOLINT
+        sscanf(tmp, "(%f %f %f %f %f %d %d %f %f %f %f %f %d %d %d %d %d %d %d %d %d %d %f %d %d %f %d %f",          // NOLINT
                &value_grid_rating_voltage_, &value_grid_rating_current_, &value_ac_output_rating_voltage_,  // NOLINT
                &value_ac_output_rating_frequency_, &value_ac_output_rating_current_,                        // NOLINT
                &value_ac_output_rating_apparent_power_, &value_ac_output_rating_active_power_,              // NOLINT
@@ -442,7 +460,8 @@ void AnernSolarEvo::loop() {
                &value_output_source_priority_, &value_charger_source_priority_, &value_parallel_max_num_,   // NOLINT
                &value_machine_type_, &value_topology_, &value_output_mode_,                                 // NOLINT
                &value_battery_redischarge_voltage_, &value_pv_ok_condition_for_parallel_,                   // NOLINT
-               &value_pv_power_balance_);                                                                   // NOLINT
+               &value_pv_power_balance_, &value_voltage_point_back_to_utility_,
+               &value_grid_tie_current_, &value_dual_output_functional_voltage_point_);                                                                   // NOLINT
         if (this->last_qpiri_) {
           this->last_qpiri_->publish_state(tmp);
         }
@@ -517,6 +536,15 @@ void AnernSolarEvo::loop() {
               break;
             case 'j':
               this->value_power_saving_ = enabled;
+              break;
+            case 'l':
+              this->value_data_log_popup_ = enabled;
+              break;
+            case 'g':
+              this->value_battery_equalization_ = enabled;
+              break;
+            case 'd':
+              this->value_dual_output_ = enabled;
               break;
           }
         }
