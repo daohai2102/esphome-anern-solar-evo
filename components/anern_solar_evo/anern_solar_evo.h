@@ -19,6 +19,7 @@ enum ENUMPollingCommand {
   POLLING_QPIWS = 4,
   POLLING_QT = 5,
   POLLING_QMN = 6,
+  POLLING_QID = 7,
 };
 struct PollingCommand {
   uint8_t *command;
@@ -117,6 +118,8 @@ class AnernSolarEvo : public uart::UARTDevice, public PollingComponent {
 
   // QMOD values
   ANERN_SOLAR_EVO_VALUED_TEXT_SENSOR(device_mode, QMOD, char)
+  // QID values
+  ANERN_SOLAR_EVO_VALUED_TEXT_SENSOR(serial_number, QID, std::string)
 
   // QFLAG values
   ANERN_SOLAR_EVO_BINARY_SENSOR(silence_buzzer_open_buzzer, QFLAG, int)
@@ -177,6 +180,7 @@ class AnernSolarEvo : public uart::UARTDevice, public PollingComponent {
   ANERN_SOLAR_EVO_TEXT_SENSOR(last_qpiws, QPIWS)
   ANERN_SOLAR_EVO_TEXT_SENSOR(last_qt, QT)
   ANERN_SOLAR_EVO_TEXT_SENSOR(last_qmn, QMN)
+  ANERN_SOLAR_EVO_TEXT_SENSOR(last_qid, QID)
 
   ANERN_SOLAR_EVO_SWITCH(output_source_priority_utility_switch, QPIRI)
   ANERN_SOLAR_EVO_SWITCH(output_source_priority_solar_switch, QPIRI)

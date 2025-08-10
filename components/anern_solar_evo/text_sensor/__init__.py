@@ -14,6 +14,8 @@ CONF_LAST_QFLAG = "last_qflag"
 CONF_LAST_QPIWS = "last_qpiws"
 CONF_LAST_QT = "last_qt"
 CONF_LAST_QMN = "last_qmn"
+CONF_SERIAL_NUMBER = "serial_number"
+CONF_LAST_QID = "last_qid"
 
 TYPES = [
     CONF_DEVICE_MODE,
@@ -24,6 +26,8 @@ TYPES = [
     CONF_LAST_QPIWS,
     CONF_LAST_QT,
     CONF_LAST_QMN,
+    CONF_SERIAL_NUMBER,
+    CONF_LAST_QID,
 ]
 
 CONFIG_SCHEMA = ANERN_SOLAR_EVO_COMPONENT_SCHEMA.extend(

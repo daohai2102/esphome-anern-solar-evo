@@ -484,6 +484,12 @@ void AnernSolarEvo::loop() {
       case POLLING_QMN:
         this->state_ = STATE_IDLE;
         break;
+      case POLLING_QID:
+        if (this->serial_number_) {
+          this->serial_number_->publish_state(this->value_serial_number_);
+        }
+        this->state_ = STATE_IDLE;
+        break;
     }
   }
 
@@ -764,6 +770,19 @@ void AnernSolarEvo::loop() {
         ESP_LOGD(TAG, "Decode QMN");
         if (this->last_qmn_) {
           this->last_qmn_->publish_state(tmp);
+        }
+        this->state_ = STATE_POLL_DECODED;
+        break;
+      case POLLING_QID:
+        ESP_LOGD(TAG, "Decode QID");
+
+        // Create a std::string from the raw buffer, starting from the second character ('(' is at index 0)
+        // and taking a number of characters equal to the total length minus 4 (1 for '(' and 3 for the end bytes).
+        this->value_serial_number_ = std::string(tmp + 1, this->read_pos_ - 4);
+
+        // For debugging, publish the full raw response if the last_qid sensor is configured.
+        if (this->last_qid_) {
+          this->last_qid_->publish_state(tmp);
         }
         this->state_ = STATE_POLL_DECODED;
         break;
