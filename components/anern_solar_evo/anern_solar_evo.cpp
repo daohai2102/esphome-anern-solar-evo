@@ -20,51 +20,97 @@ void AnernSolarEvo::empty_uart_buffer_() {
 }
 
 void AnernSolarEvo::loop() {
-  // Read message
+  // --- State: STATE_IDLE ---
+  // In idle state, we check if we need to send a command from the queue or a scheduled poll.
   if (this->state_ == STATE_IDLE) {
     this->empty_uart_buffer_();
-    switch (this->send_next_command_()) {
-      case 0:
-        // no command send (empty queue) time to poll
-        if (millis() - this->last_poll_ > this->update_interval_) {
-          this->send_next_poll_();
-          this->last_poll_ = millis();
-        }
-        return;
-        break;
-      case 1:
-        // command send
-        return;
-        break;
+    if (this->send_next_command_() == 0) { // If no command was sent from the queue
+      // Time to send a poll command
+      if (millis() - this->last_poll_ > this->update_interval_) {
+        this->send_next_poll_();
+        this->last_poll_ = millis();
+      }
     }
+    return; // Return and wait for the next loop iteration
   }
-  if (this->state_ == STATE_COMMAND_COMPLETE) {
-    if (this->check_incoming_length_(4)) {
-      ESP_LOGD(TAG, "response length for command OK");
-      if (this->check_incoming_crc_()) {
-        // crc ok
-        if (this->read_buffer_[1] == 'A' && this->read_buffer_[2] == 'C' && this->read_buffer_[3] == 'K') {
-          ESP_LOGD(TAG, "command successful");
-        } else {
-          ESP_LOGD(TAG, "command not successful");
-        }
-        this->command_queue_[this->command_queue_position_] = std::string("");
-        this->command_queue_position_ = (command_queue_position_ + 1) % COMMAND_QUEUE_LENGTH;
-        this->state_ = STATE_IDLE;
 
-      } else {
-        // crc failed
-        this->command_queue_[this->command_queue_position_] = std::string("");
-        this->command_queue_position_ = (command_queue_position_ + 1) % COMMAND_QUEUE_LENGTH;
+  // --- State: STATE_POLL or STATE_COMMAND ---
+  // In these states, we are waiting for and reading a response from the inverter.
+  if (this->state_ == STATE_POLL || this->state_ == STATE_COMMAND) {
+    while (this->available()) {
+      // 1. Check for buffer overflow BEFORE writing to the buffer.
+      if (this->read_pos_ >= ANERN_SOLAR_EVO_READ_BUFFER_LENGTH) {
+        ESP_LOGE(TAG, "Buffer overflow, discarding message. Buffer content: %s", this->read_buffer_);
+        this->read_pos_ = 0;
+        this->state_ = STATE_IDLE;
+        return; // Exit and let the next loop() call handle the idle state
+      }
+
+      uint8_t byte;
+      this->read_byte(&byte);
+
+      this->read_buffer_[this->read_pos_] = byte;
+      this->read_pos_++;
+
+      // 2. Check for the end of the message.
+      if (byte == 0x0D) {
+        this->read_buffer_[this->read_pos_ - 1] = '\0'; // Null-terminate the string, replacing the \r
+
+        if (this->state_ == STATE_POLL) {
+          this->state_ = STATE_POLL_COMPLETE;
+        } else { // STATE_COMMAND
+          this->state_ = STATE_COMMAND_COMPLETE;
+        }
+        break; // Exit the while loop, we have a complete message.
+      }
+    }
+
+    // 3. Timeout Check (if still waiting for a response)
+    if (this->state_ == STATE_POLL || this->state_ == STATE_COMMAND) {
+      if (millis() - this->command_start_millis_ > esphome::anern_solar_evo::AnernSolarEvo::COMMAND_TIMEOUT) {
+        if (this->state_ == STATE_POLL) {
+          ESP_LOGW(TAG, "Timeout waiting for poll response for: %s", (char *)this->used_polling_commands_[this->last_polling_command_].command);
+        } else { // STATE_COMMAND
+          ESP_LOGW(TAG, "Timeout waiting for command response for: %s", this->command_queue_[this->command_queue_position_].c_str());
+          this->command_queue_[this->command_queue_position_] = "";
+          this->command_queue_position_ = (this->command_queue_position_ + 1) % COMMAND_QUEUE_LENGTH;
+        }
         this->state_ = STATE_IDLE;
       }
-    } else {
-      ESP_LOGD(TAG, "response length for command %s not OK: with length %zu",
-               this->command_queue_[this->command_queue_position_].c_str(), this->read_pos_);
-      this->command_queue_[this->command_queue_position_] = std::string("");
-      this->command_queue_position_ = (command_queue_position_ + 1) % COMMAND_QUEUE_LENGTH;
-      this->state_ = STATE_IDLE;
     }
+  }
+
+  // --- State: Process complete messages ---
+  // The rest of your state machine for processing received data goes here.
+  // This logic is separated from the reading loop.
+
+  if (this->state_ == STATE_COMMAND_COMPLETE) {
+      if (this->check_incoming_crc_()) {
+        if (this->read_buffer_[1] == 'A' && this->read_buffer_[2] == 'C' && this->read_buffer_[3] == 'K') {
+          ESP_LOGD(TAG, "Command successful: %s", this->read_buffer_);
+        } else {
+          ESP_LOGW(TAG, "Command failed (NAK): %s", this->read_buffer_);
+        }
+      } else {
+        ESP_LOGW(TAG, "Received command response with invalid CRC.");
+      }
+      this->command_queue_[this->command_queue_position_] = "";
+      this->command_queue_position_ = (this->command_queue_position_ + 1) % COMMAND_QUEUE_LENGTH;
+      this->state_ = STATE_IDLE;
+  }
+
+  if (this->state_ == STATE_POLL_COMPLETE) {
+      if (this->read_buffer_[0] == '(' && this->read_buffer_[1] == 'N' && this->read_buffer_[2] == 'A' && this->read_buffer_[3] == 'K') {
+          ESP_LOGW(TAG, "Poll command failed (NAK)");
+          this->state_ = STATE_IDLE;
+          return;
+      }
+      if (this->check_incoming_crc_()) {
+          this->state_ = STATE_POLL_CHECKED;
+      } else {
+          ESP_LOGW(TAG, "Received poll response with invalid CRC.");
+          this->state_ = STATE_IDLE;
+      }
   }
 
   if (this->state_ == STATE_POLL_DECODED) {
@@ -728,46 +774,6 @@ void AnernSolarEvo::loop() {
     return;
   }
 
-  if (this->state_ == STATE_POLL_COMPLETE) {
-    if (this->check_incoming_crc_()) {
-      if (this->read_buffer_[0] == '(' && this->read_buffer_[1] == 'N' && this->read_buffer_[2] == 'A' &&
-          this->read_buffer_[3] == 'K') {
-        this->state_ = STATE_IDLE;
-        return;
-      }
-      // crc ok
-      this->state_ = STATE_POLL_CHECKED;
-      return;
-    } else {
-      this->state_ = STATE_IDLE;
-    }
-  }
-
-  if (this->state_ == STATE_COMMAND || this->state_ == STATE_POLL) {
-    while (this->available()) {
-      uint8_t byte;
-      this->read_byte(&byte);
-
-      if (this->read_pos_ == ANERN_SOLAR_EVO_READ_BUFFER_LENGTH) {
-        this->read_pos_ = 0;
-        this->empty_uart_buffer_();
-      }
-      this->read_buffer_[this->read_pos_] = byte;
-      this->read_pos_++;
-
-      // end of answer
-      if (byte == 0x0D) {
-        this->read_buffer_[this->read_pos_] = 0;
-        this->empty_uart_buffer_();
-        if (this->state_ == STATE_POLL) {
-          this->state_ = STATE_POLL_COMPLETE;
-        }
-        if (this->state_ == STATE_COMMAND) {
-          this->state_ = STATE_COMMAND_COMPLETE;
-        }
-      }
-    }  // available
-  }
   if (this->state_ == STATE_COMMAND) {
     if (millis() - this->command_start_millis_ > esphome::anern_solar_evo::AnernSolarEvo::COMMAND_TIMEOUT) {
       // command timeout
