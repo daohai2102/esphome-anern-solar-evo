@@ -170,7 +170,7 @@ void AnernSolarEvo::loop() {
           static_cast<AnernSolarEvoSelect *>(this->output_source_priority_)->publish_state_from_value(value_output_source_priority_);
         }
         if (this->charger_source_priority_) {
-          this->charger_source_priority_->publish_state(value_charger_source_priority_);
+          static_cast<AnernSolarEvoSelect *>(this->charger_source_priority_)->publish_state_from_value(value_charger_source_priority_);
         }
         if (this->parallel_max_num_) {
           this->parallel_max_num_->publish_state(value_parallel_max_num_);

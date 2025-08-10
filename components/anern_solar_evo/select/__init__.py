@@ -9,6 +9,7 @@ DEPENDENCIES = ["anern_solar_evo"]
 CONF_OUTPUT_SOURCE_PRIORITY = "output_source_priority"
 CONF_BATTERY_TYPE = "battery_type"
 CONF_INPUT_VOLTAGE_RANGE = "input_voltage_range"
+CONF_CHARGER_SOURCE_PRIORITY = "charger_source_priority"
 
 
 SELECT_TYPES = {
@@ -36,6 +37,14 @@ SELECT_TYPES = {
         "options": {
             "APL (Appliance: From 90V -> 280V)": "0",
             "UPS (USP: From 170V -> 280V)": "1",
+        },
+    },
+    CONF_CHARGER_SOURCE_PRIORITY: {
+        "command": "PCP",
+        "options": {
+            "CSO (Solar first)": "00",
+            "SNU (Solar + Utility)": "01",
+            "OSO (Only Solar)": "02",
         },
     },
 }
