@@ -172,11 +172,12 @@ void AnernSolarEvo::loop() {
           this->current_max_charging_current_->publish_state(value_current_max_charging_current_);
         }
         if (this->input_voltage_range_) {
-          this->input_voltage_range_->publish_state(value_input_voltage_range_);
-        }
-        // special for input voltage range switch
-        if (this->input_voltage_range_switch_) {
-          this->input_voltage_range_switch_->publish_state(value_input_voltage_range_ == 1);
+          std::string state;
+          switch(value_input_voltage_range_){
+            case 0: state = "APL (Appliance: From 90V -> 280V)"; break;
+            case 1: state = "UPS (USP: From 170V -> 280V)"; break;
+          }
+          this->input_voltage_range_->publish_state(state);
         }
         if (this->output_source_priority_) {
           std::string state;

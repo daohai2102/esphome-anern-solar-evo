@@ -8,6 +8,8 @@ DEPENDENCIES = ["anern_solar_evo"]
 
 CONF_OUTPUT_SOURCE_PRIORITY = "output_source_priority"
 CONF_BATTERY_TYPE = "battery_type"
+CONF_INPUT_VOLTAGE_RANGE = "input_voltage_range"
+
 
 SELECT_TYPES = {
     CONF_OUTPUT_SOURCE_PRIORITY: {
@@ -27,6 +29,13 @@ SELECT_TYPES = {
             "LIB (Lithium-Ion Battery)": "03",
             "LIC (Lithium-Ion Capacitor)": "04",
             "LIP (Lithium Polymer LiPo)": "05",
+        },
+    },
+    CONF_INPUT_VOLTAGE_RANGE: {
+        "command": "PGR",
+        "options": {
+            "APL (Appliance: From 90V -> 280V)": "0",
+            "UPS (USP: From 170V -> 280V)": "1",
         },
     },
 }

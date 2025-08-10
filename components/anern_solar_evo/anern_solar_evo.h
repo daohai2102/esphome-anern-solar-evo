@@ -103,7 +103,6 @@ class AnernSolarEvo : public uart::UARTDevice, public PollingComponent {
   ANERN_SOLAR_EVO_SENSOR(battery_float_voltage, QPIRI, float)
   ANERN_SOLAR_EVO_SENSOR(current_max_ac_charging_current, QPIRI, int)
   ANERN_SOLAR_EVO_SENSOR(current_max_charging_current, QPIRI, int)
-  ANERN_SOLAR_EVO_SENSOR(input_voltage_range, QPIRI, int)
   ANERN_SOLAR_EVO_SENSOR(charger_source_priority, QPIRI, int)
   ANERN_SOLAR_EVO_SENSOR(parallel_max_num, QPIRI, int)
   ANERN_SOLAR_EVO_SENSOR(machine_type, QPIRI, int)
@@ -118,6 +117,7 @@ class AnernSolarEvo : public uart::UARTDevice, public PollingComponent {
   // select
   ANERN_SOLAR_EVO_SELECT(output_source_priority, QPIRI, int)
   ANERN_SOLAR_EVO_SELECT(battery_type, QPIRI, int)
+  ANERN_SOLAR_EVO_SELECT(input_voltage_range, QPIRI, int)
 
   // QMOD values
   ANERN_SOLAR_EVO_VALUED_TEXT_SENSOR(device_mode, QMOD, char)
@@ -182,7 +182,6 @@ class AnernSolarEvo : public uart::UARTDevice, public PollingComponent {
   ANERN_SOLAR_EVO_TEXT_SENSOR(last_qmn, QMN)
   ANERN_SOLAR_EVO_TEXT_SENSOR(last_qid, QID)
 
-  ANERN_SOLAR_EVO_SWITCH(input_voltage_range_switch, QPIRI)
   ANERN_SOLAR_EVO_SWITCH(pv_ok_condition_for_parallel_switch, QPIRI)
   ANERN_SOLAR_EVO_SWITCH(pv_power_balance_switch, QPIRI)
 
