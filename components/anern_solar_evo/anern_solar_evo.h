@@ -131,9 +131,6 @@ class AnernSolarEvo : public uart::UARTDevice, public PollingComponent {
   ANERN_SOLAR_EVO_BINARY_SENSOR(alarm_on_when_primary_source_interrupt, QFLAG, int)
   ANERN_SOLAR_EVO_BINARY_SENSOR(fault_code_record, QFLAG, int)
   ANERN_SOLAR_EVO_BINARY_SENSOR(power_saving, QFLAG, int)
-  ANERN_SOLAR_EVO_BINARY_SENSOR(data_log_popup, QFLAG, int) // can be alerm control or led light pattern -> need to check
-  ANERN_SOLAR_EVO_BINARY_SENSOR(battery_equalization, QFLAG, int) // can be equalization activated immediately -> need to check
-  ANERN_SOLAR_EVO_BINARY_SENSOR(dual_output, QFLAG, int) // equalization activated immediately -> need to check
 
   // QPIWS values
   ANERN_SOLAR_EVO_BINARY_SENSOR(warnings_present, QPIWS, bool)

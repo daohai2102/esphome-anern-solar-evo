@@ -357,15 +357,6 @@ void AnernSolarEvo::loop() {
         if (this->power_saving_) {
           this->power_saving_->publish_state(value_power_saving_);
         }
-        if (this->data_log_popup_) {
-          this->data_log_popup_->publish_state(value_data_log_popup_);
-        }
-        if (this->battery_equalization_) {
-          this->battery_equalization_->publish_state(value_battery_equalization_);
-        }
-        if (this->dual_output_) {
-          this->dual_output_->publish_state(value_dual_output_);
-        }
         this->state_ = STATE_IDLE;
         break;
       case POLLING_QPIWS:
@@ -588,15 +579,6 @@ void AnernSolarEvo::loop() {
               break;
             case 'j':
               this->value_power_saving_ = enabled;
-              break;
-            case 'l':
-              this->value_data_log_popup_ = enabled;
-              break;
-            case 'g':
-              this->value_battery_equalization_ = enabled;
-              break;
-            case 'd':
-              this->value_dual_output_ = enabled;
               break;
           }
         }
