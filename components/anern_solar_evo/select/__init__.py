@@ -7,6 +7,7 @@ from .. import CONF_ANERN_SOLAR_EVO_ID, ANERN_SOLAR_EVO_COMPONENT_SCHEMA, anern_
 DEPENDENCIES = ["anern_solar_evo"]
 
 CONF_OUTPUT_SOURCE_PRIORITY = "output_source_priority"
+CONF_BATTERY_TYPE = "battery_type"
 
 SELECT_TYPES = {
     CONF_OUTPUT_SOURCE_PRIORITY: {
@@ -15,6 +16,17 @@ SELECT_TYPES = {
             "USB (Utility first)": "00",
             "SUB (Solar + Utility first)": "01",
             "SBU (Solar + Battery first)": "02",
+        },
+    },
+    CONF_BATTERY_TYPE: {
+        "command": "PBT",
+        "options": {
+            "AGM (Absorbent Glass Mat)": "00",
+            "FLD (Flooded)": "01",
+            "USE (User Defined)": "02",
+            "LIB (Lithium-Ion Battery)": "03",
+            "LIC (Lithium-Ion Capacitor)": "04",
+            "LIP (Lithium Polymer LiPo)": "05",
         },
     },
 }

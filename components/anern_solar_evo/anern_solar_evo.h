@@ -101,7 +101,6 @@ class AnernSolarEvo : public uart::UARTDevice, public PollingComponent {
   ANERN_SOLAR_EVO_SENSOR(battery_under_voltage, QPIRI, float)
   ANERN_SOLAR_EVO_SENSOR(battery_bulk_voltage, QPIRI, float)
   ANERN_SOLAR_EVO_SENSOR(battery_float_voltage, QPIRI, float)
-  ANERN_SOLAR_EVO_SENSOR(battery_type, QPIRI, int)
   ANERN_SOLAR_EVO_SENSOR(current_max_ac_charging_current, QPIRI, int)
   ANERN_SOLAR_EVO_SENSOR(current_max_charging_current, QPIRI, int)
   ANERN_SOLAR_EVO_SENSOR(input_voltage_range, QPIRI, int)
@@ -118,6 +117,7 @@ class AnernSolarEvo : public uart::UARTDevice, public PollingComponent {
   ANERN_SOLAR_EVO_SENSOR(dual_output_functional_voltage_point, QPIRI, float)
   // select
   ANERN_SOLAR_EVO_SELECT(output_source_priority, QPIRI, int)
+  ANERN_SOLAR_EVO_SELECT(battery_type, QPIRI, int)
 
   // QMOD values
   ANERN_SOLAR_EVO_VALUED_TEXT_SENSOR(device_mode, QMOD, char)

@@ -154,7 +154,16 @@ void AnernSolarEvo::loop() {
           this->battery_float_voltage_->publish_state(value_battery_float_voltage_);
         }
         if (this->battery_type_) {
-          this->battery_type_->publish_state(value_battery_type_);
+          std::string state;
+          switch (value_battery_type_) {
+            case 0: state = "AGM (Absorbent Glass Mat)"; break;
+            case 1: state = "FLD (Flooded)"; break;
+            case 2: state = "USE (User Defined)"; break;
+            case 3: state = "LIB (Lithium-Ion Battery)"; break;
+            case 4: state = "LIC (Lithium-Ion Capacitor)"; break;
+            case 5: state = "LIP (Lithium Polymer LiPo)"; break;
+          }
+          this->battery_type_->publish_state(state);
         }
         if (this->current_max_ac_charging_current_) {
           this->current_max_ac_charging_current_->publish_state(value_current_max_ac_charging_current_);
