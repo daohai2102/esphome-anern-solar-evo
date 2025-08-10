@@ -4,6 +4,7 @@
 #include "esphome/components/sensor/sensor.h"
 #include "esphome/components/switch/switch.h"
 #include "esphome/components/text_sensor/text_sensor.h"
+#include "esphome/components/select/select.h"
 #include "esphome/components/uart/uart.h"
 #include "esphome/core/automation.h"
 #include "esphome/core/component.h"
@@ -51,6 +52,8 @@ ANERN_SOLAR_EVO_VALUED_ENTITY_(binary_sensor::BinarySensor, name, polling_comman
 #define ANERN_SOLAR_EVO_VALUED_TEXT_SENSOR(name, polling_command, value_type) \
 ANERN_SOLAR_EVO_VALUED_ENTITY_(text_sensor::TextSensor, name, polling_command, value_type)
 #define ANERN_SOLAR_EVO_TEXT_SENSOR(name, polling_command) ANERN_SOLAR_EVO_ENTITY_(text_sensor::TextSensor, name, polling_command)
+#define ANERN_SOLAR_EVO_SELECT(name, polling_command, value_type) \
+ANERN_SOLAR_EVO_VALUED_ENTITY_(select::Select, name, polling_command, value_type)
 
 class AnernSolarEvo : public uart::UARTDevice, public PollingComponent {
   // QPIGS values
@@ -102,7 +105,6 @@ class AnernSolarEvo : public uart::UARTDevice, public PollingComponent {
   ANERN_SOLAR_EVO_SENSOR(current_max_ac_charging_current, QPIRI, int)
   ANERN_SOLAR_EVO_SENSOR(current_max_charging_current, QPIRI, int)
   ANERN_SOLAR_EVO_SENSOR(input_voltage_range, QPIRI, int)
-  ANERN_SOLAR_EVO_SENSOR(output_source_priority, QPIRI, int)
   ANERN_SOLAR_EVO_SENSOR(charger_source_priority, QPIRI, int)
   ANERN_SOLAR_EVO_SENSOR(parallel_max_num, QPIRI, int)
   ANERN_SOLAR_EVO_SENSOR(machine_type, QPIRI, int)
@@ -114,7 +116,8 @@ class AnernSolarEvo : public uart::UARTDevice, public PollingComponent {
   ANERN_SOLAR_EVO_SENSOR(voltage_point_back_to_utility, QPIRI, float) // need to check
   ANERN_SOLAR_EVO_SENSOR(grid_tie_current, QPIRI, int)
   ANERN_SOLAR_EVO_SENSOR(dual_output_functional_voltage_point, QPIRI, float)
-
+  // select
+  ANERN_SOLAR_EVO_SELECT(output_source_priority, QPIRI, int)
 
   // QMOD values
   ANERN_SOLAR_EVO_VALUED_TEXT_SENSOR(device_mode, QMOD, char)
@@ -179,10 +182,6 @@ class AnernSolarEvo : public uart::UARTDevice, public PollingComponent {
   ANERN_SOLAR_EVO_TEXT_SENSOR(last_qmn, QMN)
   ANERN_SOLAR_EVO_TEXT_SENSOR(last_qid, QID)
 
-  ANERN_SOLAR_EVO_SWITCH(output_source_priority_utility_switch, QPIRI)
-  ANERN_SOLAR_EVO_SWITCH(output_source_priority_solar_switch, QPIRI)
-  ANERN_SOLAR_EVO_SWITCH(output_source_priority_battery_switch, QPIRI)
-  ANERN_SOLAR_EVO_SWITCH(output_source_priority_hybrid_switch, QPIRI)
   ANERN_SOLAR_EVO_SWITCH(input_voltage_range_switch, QPIRI)
   ANERN_SOLAR_EVO_SWITCH(pv_ok_condition_for_parallel_switch, QPIRI)
   ANERN_SOLAR_EVO_SWITCH(pv_power_balance_switch, QPIRI)

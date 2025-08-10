@@ -5,7 +5,7 @@ from esphome.const import CONF_ID
 
 DEPENDENCIES = ["uart"]
 CODEOWNERS = ["@andreashergert1984"]
-AUTO_LOAD = ["binary_sensor", "text_sensor", "sensor", "switch", "output"]
+AUTO_LOAD = ["binary_sensor", "text_sensor", "sensor", "switch", "output", "select"]
 MULTI_CONF = True
 
 CONF_ANERN_SOLAR_EVO_ID = "anern_solar_evo_id"

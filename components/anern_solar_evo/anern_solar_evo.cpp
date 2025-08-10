@@ -170,20 +170,13 @@ void AnernSolarEvo::loop() {
           this->input_voltage_range_switch_->publish_state(value_input_voltage_range_ == 1);
         }
         if (this->output_source_priority_) {
-          this->output_source_priority_->publish_state(value_output_source_priority_);
-        }
-        // special for output source priority switches
-        if (this->output_source_priority_utility_switch_) {
-          this->output_source_priority_utility_switch_->publish_state(value_output_source_priority_ == 0);
-        }
-        if (this->output_source_priority_solar_switch_) {
-          this->output_source_priority_solar_switch_->publish_state(value_output_source_priority_ == 1);
-        }
-        if (this->output_source_priority_battery_switch_) {
-          this->output_source_priority_battery_switch_->publish_state(value_output_source_priority_ == 2);
-        }
-        if (this->output_source_priority_hybrid_switch_) {
-          this->output_source_priority_hybrid_switch_->publish_state(value_output_source_priority_ == 3);
+          std::string state;
+          switch (value_output_source_priority_) {
+            case 0: state = "USB (Utility first)"; break;
+            case 1: state = "SUB (Solar + Utility first)"; break;
+            case 2: state = "SBU (Solar + Battery first)"; break;
+          }
+          this->output_source_priority_->publish_state(state);
         }
         if (this->charger_source_priority_) {
           this->charger_source_priority_->publish_state(value_charger_source_priority_);
