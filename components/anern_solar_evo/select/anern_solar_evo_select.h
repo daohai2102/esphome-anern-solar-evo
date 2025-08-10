@@ -13,6 +13,8 @@ class AnernSolarEvoSelect : public select::Select, public Component {
   void set_command(const std::string &command) { this->command_ = command; };
   void add_option(const std::string &key, const std::string &value);
   void dump_config() override;
+  void set_reverse_mapping(std::function<std::string(int)> f) { this->reverse_mapping_ = f; }
+  void publish_state_from_value(int value);
 
  protected:
   void control(const std::string &value) override;
@@ -20,6 +22,7 @@ class AnernSolarEvoSelect : public select::Select, public Component {
   std::string command_;
   std::map<std::string, std::string> options_;
   AnernSolarEvo *parent_;
+  std::function<std::string(int)> reverse_mapping_{nullptr};
 };
 
 }  // namespace anern_solar_evo

@@ -1,6 +1,7 @@
 #include "anern_solar_evo.h"
 #include "esphome/core/helpers.h"
 #include "esphome/core/log.h"
+#include "select/anern_solar_evo_select.h"
 
 namespace esphome {
 namespace anern_solar_evo {
@@ -154,16 +155,7 @@ void AnernSolarEvo::loop() {
           this->battery_float_voltage_->publish_state(value_battery_float_voltage_);
         }
         if (this->battery_type_) {
-          std::string state;
-          switch (value_battery_type_) {
-            case 0: state = "AGM (Absorbent Glass Mat)"; break;
-            case 1: state = "FLD (Flooded)"; break;
-            case 2: state = "USE (User Defined)"; break;
-            case 3: state = "LIB (Lithium-Ion Battery)"; break;
-            case 4: state = "LIC (Lithium-Ion Capacitor)"; break;
-            case 5: state = "LIP (Lithium Polymer LiPo)"; break;
-          }
-          this->battery_type_->publish_state(state);
+          static_cast<AnernSolarEvoSelect *>(this->battery_type_)->publish_state_from_value(value_battery_type_);
         }
         if (this->current_max_ac_charging_current_) {
           this->current_max_ac_charging_current_->publish_state(value_current_max_ac_charging_current_);
@@ -172,21 +164,10 @@ void AnernSolarEvo::loop() {
           this->current_max_charging_current_->publish_state(value_current_max_charging_current_);
         }
         if (this->input_voltage_range_) {
-          std::string state;
-          switch(value_input_voltage_range_){
-            case 0: state = "APL (Appliance: From 90V -> 280V)"; break;
-            case 1: state = "UPS (USP: From 170V -> 280V)"; break;
-          }
-          this->input_voltage_range_->publish_state(state);
+          static_cast<AnernSolarEvoSelect *>(this->input_voltage_range_)->publish_state_from_value(value_input_voltage_range_);
         }
         if (this->output_source_priority_) {
-          std::string state;
-          switch (value_output_source_priority_) {
-            case 0: state = "USB (Utility first)"; break;
-            case 1: state = "SUB (Solar + Utility first)"; break;
-            case 2: state = "SBU (Solar + Battery first)"; break;
-          }
-          this->output_source_priority_->publish_state(state);
+          static_cast<AnernSolarEvoSelect *>(this->output_source_priority_)->publish_state_from_value(value_output_source_priority_);
         }
         if (this->charger_source_priority_) {
           this->charger_source_priority_->publish_state(value_charger_source_priority_);

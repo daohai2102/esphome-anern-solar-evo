@@ -64,3 +64,11 @@ async def to_code(config):
             cg.add(var.set_command(conf["command"]))
             for key, val in conf["options"].items():
                 cg.add(var.add_option(key, val))
+
+            # Generate a C++ lambda function for the reverse mapping
+            map_lambda = f"[](int value) -> std::string {{ switch(value) {{ "
+            for friendly_name, protocol_val in conf["options"].items():
+                # Use int() to handle both "1" and "01" as integers for the case statement
+                map_lambda += f'case {int(protocol_val)}: return "{friendly_name}"; '
+            map_lambda += 'default: return ""; } }' # Return empty string for unknown values
+            cg.add(var.set_reverse_mapping(cg.RawExpression(map_lambda)))

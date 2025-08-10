@@ -18,6 +18,12 @@ void AnernSolarEvoSelect::add_option(const std::string &key, const std::string &
   this->options_[key] = value;
 }
 
+void AnernSolarEvoSelect::publish_state_from_value(int value) {
+  if (this->reverse_mapping_) {
+    this->publish_state(this->reverse_mapping_(value));
+  }
+}
+
 void AnernSolarEvoSelect::dump_config() {
   LOG_SELECT("", "AnernSolarEvo Select", this);
 }
