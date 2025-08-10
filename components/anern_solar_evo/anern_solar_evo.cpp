@@ -188,18 +188,10 @@ void AnernSolarEvo::loop() {
           this->battery_redischarge_voltage_->publish_state(value_battery_redischarge_voltage_);
         }
         if (this->pv_ok_condition_for_parallel_) {
-          this->pv_ok_condition_for_parallel_->publish_state(value_pv_ok_condition_for_parallel_);
-        }
-        // special for pv ok condition switch
-        if (this->pv_ok_condition_for_parallel_switch_) {
-          this->pv_ok_condition_for_parallel_switch_->publish_state(value_pv_ok_condition_for_parallel_ == 1);
+          static_cast<AnernSolarEvoSelect *>(this->pv_ok_condition_for_parallel_)->publish_state_from_value(value_pv_ok_condition_for_parallel_);
         }
         if (this->pv_power_balance_) {
-          this->pv_power_balance_->publish_state(value_pv_power_balance_ == 1);
-        }
-        // special for power balance switch
-        if (this->pv_power_balance_switch_) {
-          this->pv_power_balance_switch_->publish_state(value_pv_power_balance_ == 1);
+          static_cast<AnernSolarEvoSelect *>(this->pv_power_balance_)->publish_state_from_value(value_pv_power_balance_);
         }
         if (this->voltage_point_back_to_utility_) {
           this->voltage_point_back_to_utility_->publish_state(value_voltage_point_back_to_utility_);

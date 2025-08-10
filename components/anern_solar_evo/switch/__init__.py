@@ -7,13 +7,11 @@ from .. import CONF_ANERN_SOLAR_EVO_ID, ANERN_SOLAR_EVO_COMPONENT_SCHEMA, anern_
 
 DEPENDENCIES = ["uart"]
 
-CONF_PV_OK_CONDITION_FOR_PARALLEL = "pv_ok_condition_for_parallel"
-CONF_PV_POWER_BALANCE = "pv_power_balance"
+# CONF_PV_OK_CONDITION_FOR_PARALLEL = "pv_ok_condition_for_parallel"
 
-TYPES = {
-    CONF_PV_OK_CONDITION_FOR_PARALLEL: ("PPVOKC1", "PPVOKC0"),
-    CONF_PV_POWER_BALANCE: ("PSPB1", "PSPB0"),
-}
+# TYPES = {
+#     CONF_PV_OK_CONDITION_FOR_PARALLEL: ("PPVOKC1", "PPVOKC0"),
+# }
 
 AnernSolarEvoSwitch = anern_solar_evo_ns.class_("AnernSolarEvoSwitch", switch.Switch, cg.Component)
 

@@ -10,7 +10,8 @@ CONF_OUTPUT_SOURCE_PRIORITY = "output_source_priority"
 CONF_BATTERY_TYPE = "battery_type"
 CONF_INPUT_VOLTAGE_RANGE = "input_voltage_range"
 CONF_CHARGER_SOURCE_PRIORITY = "charger_source_priority"
-
+CONF_PV_POWER_BALANCE = "pv_power_balance"
+CONF_PV_OK_CONDITION_FOR_PARALLEL = "pv_ok_condition_for_parallel"
 
 SELECT_TYPES = {
     CONF_OUTPUT_SOURCE_PRIORITY: {
@@ -45,6 +46,20 @@ SELECT_TYPES = {
             "CSO (Solar first)": "00",
             "SNU (Solar + Utility)": "01",
             "OSO (Only Solar)": "02",
+        },
+    },
+    CONF_PV_POWER_BALANCE: {
+        "command": "PSPB",
+        "options": {
+            "Max charged power": "0",
+            "Max charged power + load power": "1",
+        },
+    },
+    CONF_PV_OK_CONDITION_FOR_PARALLEL: {
+        "command": "PPVOKC",
+        "options": {
+            "One unit of inverters has connect PV": "0",
+            "Only all of inverters have connect PV": "1",
         },
     },
 }

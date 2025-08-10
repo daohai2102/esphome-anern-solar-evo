@@ -43,8 +43,6 @@ CONF_MACHINE_TYPE = "machine_type"
 CONF_TOPOLOGY = "topology"
 CONF_OUTPUT_MODE = "output_mode"
 CONF_BATTERY_REDISCHARGE_VOLTAGE = "battery_redischarge_voltage"
-CONF_PV_OK_CONDITION_FOR_PARALLEL = "pv_ok_condition_for_parallel"
-CONF_PV_POWER_BALANCE = "pv_power_balance"
 CONF_VOLTAGE_POINT_BACK_TO_UTILITY = "voltage_point_back_to_utility"
 CONF_GRID_TIE_CURRENT = "grid_tie_current"
 CONF_DUAL_OUTPUT_FUNCTIONAL_VOLTAGE_POINT = "dual_output_functional_voltage_point"
@@ -153,12 +151,6 @@ TYPES = {
         accuracy_decimals=1,
     ),
     CONF_BATTERY_REDISCHARGE_VOLTAGE: sensor.sensor_schema(
-        accuracy_decimals=1,
-    ),
-    CONF_PV_OK_CONDITION_FOR_PARALLEL: sensor.sensor_schema(
-        accuracy_decimals=1,
-    ),
-    CONF_PV_POWER_BALANCE: sensor.sensor_schema(
         accuracy_decimals=1,
     ),
     CONF_VOLTAGE_POINT_BACK_TO_UTILITY: sensor.sensor_schema(

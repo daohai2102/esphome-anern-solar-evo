@@ -108,8 +108,6 @@ class AnernSolarEvo : public uart::UARTDevice, public PollingComponent {
   ANERN_SOLAR_EVO_SENSOR(topology, QPIRI, int)
   ANERN_SOLAR_EVO_SENSOR(output_mode, QPIRI, int)
   ANERN_SOLAR_EVO_SENSOR(battery_redischarge_voltage, QPIRI, float)
-  ANERN_SOLAR_EVO_SENSOR(pv_ok_condition_for_parallel, QPIRI, int)
-  ANERN_SOLAR_EVO_SENSOR(pv_power_balance, QPIRI, int)
   ANERN_SOLAR_EVO_SENSOR(voltage_point_back_to_utility, QPIRI, float) // need to check
   ANERN_SOLAR_EVO_SENSOR(grid_tie_current, QPIRI, int)
   ANERN_SOLAR_EVO_SENSOR(dual_output_functional_voltage_point, QPIRI, float)
@@ -118,6 +116,8 @@ class AnernSolarEvo : public uart::UARTDevice, public PollingComponent {
   ANERN_SOLAR_EVO_SELECT(battery_type, QPIRI, int)
   ANERN_SOLAR_EVO_SELECT(input_voltage_range, QPIRI, int)
   ANERN_SOLAR_EVO_SELECT(charger_source_priority, QPIRI, int)
+  ANERN_SOLAR_EVO_SELECT(pv_power_balance, QPIRI, int)
+  ANERN_SOLAR_EVO_SELECT(pv_ok_condition_for_parallel, QPIRI, int)
 
   // QMOD values
   ANERN_SOLAR_EVO_VALUED_TEXT_SENSOR(device_mode, QMOD, char)
@@ -182,8 +182,7 @@ class AnernSolarEvo : public uart::UARTDevice, public PollingComponent {
   ANERN_SOLAR_EVO_TEXT_SENSOR(last_qmn, QMN)
   ANERN_SOLAR_EVO_TEXT_SENSOR(last_qid, QID)
 
-  ANERN_SOLAR_EVO_SWITCH(pv_ok_condition_for_parallel_switch, QPIRI)
-  ANERN_SOLAR_EVO_SWITCH(pv_power_balance_switch, QPIRI)
+  // ANERN_SOLAR_EVO_SWITCH(pv_ok_condition_for_parallel_switch, QPIRI)
 
   void switch_command(const std::string &command);
   void setup() override;
