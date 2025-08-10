@@ -459,8 +459,8 @@ void AnernSolarEvo::loop() {
         if (this->fault_code_) {
           this->fault_code_->publish_state(value_fault_code_);
         }
-        if (this->warnung_low_pv_energy_) {
-          this->warnung_low_pv_energy_->publish_state(value_warnung_low_pv_energy_);
+        if (this->warning_low_pv_energy_) {
+          this->warning_low_pv_energy_->publish_state(value_warning_low_pv_energy_);
         }
         if (this->warning_high_ac_input_during_bus_soft_start_) {
           this->warning_high_ac_input_during_bus_soft_start_->publish_state(
@@ -723,7 +723,7 @@ void AnernSolarEvo::loop() {
               this->value_fault_code_ = parse_number<int>(fc).value_or(0);
               break;
             case 34:
-              this->value_warnung_low_pv_energy_ = enabled;
+              this->value_warning_low_pv_energy_ = enabled;
               this->value_warnings_present_ += enabled;
               break;
             case 35:
