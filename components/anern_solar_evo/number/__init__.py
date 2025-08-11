@@ -18,12 +18,16 @@ DEPENDENCIES = ["anern_solar_evo"]
 CONF_BATTERY_UNDER_VOLTAGE = "battery_under_voltage"
 CONF_CURRENT_MAX_CHARGING_CURRENT = "current_max_charging_current"
 CONF_CURRENT_MAX_AC_CHARGING_CURRENT = "current_max_ac_charging_current"
+CONF_BATTERY_FLOAT_VOLTAGE = "battery_float_voltage"
+CONF_BATTERY_BULK_VOLTAGE = "battery_bulk_voltage"
+CONF_BATTERY_REDISCHARGE_VOLTAGE = "battery_redischarge_voltage"
+CONF_BATTERY_RECHARGE_VOLTAGE = "battery_recharge_voltage"
 
 AnernSolarEvoNumber = anern_solar_evo_ns.class_("AnernSolarEvoNumber", number.Number, cg.Component)
 
 TYPES = {
     CONF_BATTERY_UNDER_VOLTAGE: {
-        "command": "PSDV%04.1f",
+        "command": "PSDV%02.1f",
         "min_value": 20.0,
         "max_value": 24.0,
         "step": 0.1,
@@ -45,6 +49,38 @@ TYPES = {
         "step": 10.0,
         "device_class": DEVICE_CLASS_CURRENT,
         "unit_of_measurement": UNIT_AMPERE,
+    },
+    CONF_BATTERY_FLOAT_VOLTAGE: {
+        "command": "PBFT%02.1f",
+        "min_value": 25.0,
+        "max_value": 29.0,
+        "step": 0.1,
+        "device_class": DEVICE_CLASS_VOLTAGE,
+        "unit_of_measurement": UNIT_VOLT,
+    },
+    CONF_BATTERY_BULK_VOLTAGE: {
+        "command": "PCVV%02.1f",
+        "min_value": 25.0,
+        "max_value": 29.0,
+        "step": 0.1,
+        "device_class": DEVICE_CLASS_VOLTAGE,
+        "unit_of_measurement": UNIT_VOLT,
+    },
+    CONF_BATTERY_REDISCHARGE_VOLTAGE: {
+        "command": "PBDV%02.1f",
+        "min_value": 24.0,
+        "max_value": 29.0,
+        "step": 0.5,
+        "device_class": DEVICE_CLASS_VOLTAGE,
+        "unit_of_measurement": UNIT_VOLT,
+    },
+    CONF_BATTERY_RECHARGE_VOLTAGE: {
+        "command": "PBCV%02.1f",
+        "min_value": 21.0,
+        "max_value": 25.5,
+        "step": 0.5,
+        "device_class": DEVICE_CLASS_VOLTAGE,
+        "unit_of_measurement": UNIT_VOLT,
     },
 }
 

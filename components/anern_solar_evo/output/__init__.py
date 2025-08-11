@@ -35,19 +35,19 @@ CONF_BATTERY_FLOAT_VOLTAGE = "battery_float_voltage"
 CONF_BATTERY_REDISCHARGE_VOLTAGE = "battery_redischarge_voltage"
 
 TYPES = {
-    CONF_BATTERY_RECHARGE_VOLTAGE: (
-        [44.0, 45.0, 46.0, 47.0, 48.0, 49.0, 50.0, 51.0],
-        "PBCV%02.1f",
-    ),
-    CONF_BATTERY_UNDER_VOLTAGE: (
-        [40.0, 40.1, 42, 43, 44, 45, 46, 47, 48.0],
-        "PSDV%02.1f",
-    ),
-    CONF_BATTERY_FLOAT_VOLTAGE: ([48.0, 49.0, 50.0, 51.0], "PBFT%02.1f"),
-    CONF_BATTERY_REDISCHARGE_VOLTAGE: (
-        [0, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58],
-        "PBDV%02.1f",
-    ),
+    # CONF_BATTERY_RECHARGE_VOLTAGE: (
+    #     [44.0, 45.0, 46.0, 47.0, 48.0, 49.0, 50.0, 51.0],
+    #     "PBCV%02.1f",
+    # ),
+    # CONF_BATTERY_UNDER_VOLTAGE: (
+    #     [40.0, 40.1, 42, 43, 44, 45, 46, 47, 48.0],
+    #     "PSDV%02.1f",
+    # ),
+    # CONF_BATTERY_FLOAT_VOLTAGE: ([48.0, 49.0, 50.0, 51.0], "PBFT%02.1f"),
+    # CONF_BATTERY_REDISCHARGE_VOLTAGE: (
+    #     [0, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58],
+    #     "PBDV%02.1f",
+    # ),
 }
 
 CONFIG_SCHEMA = ANERN_SOLAR_EVO_COMPONENT_SCHEMA.extend(
