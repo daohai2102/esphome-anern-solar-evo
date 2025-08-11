@@ -6,7 +6,9 @@ from esphome.const import (
     CONF_DEVICE_CLASS,
     CONF_UNIT_OF_MEASUREMENT,
     DEVICE_CLASS_VOLTAGE,
+    DEVICE_CLASS_CURRENT,
     UNIT_VOLT,
+    UNIT_AMPERE,
 )
 
 from .. import CONF_ANERN_SOLAR_EVO_ID, ANERN_SOLAR_EVO_COMPONENT_SCHEMA, anern_solar_evo_ns
@@ -14,17 +16,26 @@ from .. import CONF_ANERN_SOLAR_EVO_ID, ANERN_SOLAR_EVO_COMPONENT_SCHEMA, anern_
 DEPENDENCIES = ["anern_solar_evo"]
 
 CONF_BATTERY_UNDER_VOLTAGE = "battery_under_voltage"
+CONF_CURRENT_MAX_CHARGING_CURRENT = "current_max_charging_current"
 
 AnernSolarEvoNumber = anern_solar_evo_ns.class_("AnernSolarEvoNumber", number.Number, cg.Component)
 
 TYPES = {
     CONF_BATTERY_UNDER_VOLTAGE: {
         "command": "PSDV%04.1f",
-        "min_value": 40.0,
-        "max_value": 48.0,
+        "min_value": 20.0,
+        "max_value": 24.0,
         "step": 0.1,
         "device_class": DEVICE_CLASS_VOLTAGE,
         "unit_of_measurement": UNIT_VOLT,
+    },
+    CONF_CURRENT_MAX_CHARGING_CURRENT: {
+        "command": "MCHGC0%02.0f",
+        "min_value": 10.0,
+        "max_value": 90.0,
+        "step": 10.0,
+        "device_class": DEVICE_CLASS_CURRENT,
+        "unit_of_measurement": UNIT_AMPERE,
     },
     # You can add other number configurations here
 }
