@@ -87,6 +87,9 @@ class AnernSolarEvo : public uart::UARTDevice, public PollingComponent {
   ANERN_SOLAR_EVO_BINARY_SENSOR(charging_to_floating_mode, QPIGS, int)
   ANERN_SOLAR_EVO_BINARY_SENSOR(switch_on, QPIGS, int)
   ANERN_SOLAR_EVO_BINARY_SENSOR(dustproof_installed, QPIGS, int)
+  ANERN_SOLAR_EVO_SENSOR(battery_charging_power, QPIGS, int)
+  ANERN_SOLAR_EVO_SENSOR(battery_discharge_power, QPIGS, int)
+  ANERN_SOLAR_EVO_SENSOR(grid_power, QPIGS, int)
 
   // QPIRI values
   ANERN_SOLAR_EVO_SENSOR(grid_rating_voltage, QPIRI, float)

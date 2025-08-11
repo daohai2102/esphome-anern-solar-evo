@@ -296,6 +296,19 @@ void AnernSolarEvo::loop() {
         if (this->dustproof_installed_) {
           this->dustproof_installed_->publish_state(value_dustproof_installed_);
         }
+        // Calculated sensors
+        if (this->battery_charging_power_) {
+          int battery_charging_power = value_battery_charging_current_ * value_battery_voltage_;
+          this->battery_charging_power_->publish_state(battery_charging_power);
+        }
+        if (this->battery_discharge_power_) {
+          int battery_discharge_power = value_battery_discharge_current_ * value_battery_voltage_;
+          this->battery_discharge_power_->publish_state(battery_discharge_power);
+        }
+        if (this->grid_power_) {
+          int grid_power = value_ac_output_apparent_power_ + (value_battery_charging_current_ * value_battery_voltage_) - value_pv_charging_power_ - (value_battery_discharge_current_ * value_battery_voltage_);
+          this->grid_power_->publish_state(grid_power);
+        }
         this->state_ = STATE_IDLE;
         break;
       case POLLING_QMOD:
