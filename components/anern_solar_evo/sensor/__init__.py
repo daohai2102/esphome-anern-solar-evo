@@ -32,7 +32,6 @@ CONF_AC_OUTPUT_RATING_APPARENT_POWER = "ac_output_rating_apparent_power"
 CONF_AC_OUTPUT_RATING_ACTIVE_POWER = "ac_output_rating_active_power"
 CONF_BATTERY_RATING_VOLTAGE = "battery_rating_voltage"
 CONF_BATTERY_RECHARGE_VOLTAGE = "battery_recharge_voltage"
-CONF_BATTERY_UNDER_VOLTAGE = "battery_under_voltage"
 CONF_BATTERY_BULK_VOLTAGE = "battery_bulk_voltage"
 CONF_BATTERY_FLOAT_VOLTAGE = "battery_float_voltage"
 CONF_BATTERY_TYPE = "battery_type"
@@ -113,11 +112,6 @@ TYPES = {
         device_class=DEVICE_CLASS_VOLTAGE,
     ),
     CONF_BATTERY_RECHARGE_VOLTAGE: sensor.sensor_schema(
-        unit_of_measurement=UNIT_VOLT,
-        accuracy_decimals=1,
-        device_class=DEVICE_CLASS_VOLTAGE,
-    ),
-    CONF_BATTERY_UNDER_VOLTAGE: sensor.sensor_schema(
         unit_of_measurement=UNIT_VOLT,
         accuracy_decimals=1,
         device_class=DEVICE_CLASS_VOLTAGE,

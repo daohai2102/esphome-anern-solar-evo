@@ -5,6 +5,7 @@
 #include "esphome/components/switch/switch.h"
 #include "esphome/components/text_sensor/text_sensor.h"
 #include "esphome/components/select/select.h"
+#include "esphome/components/number/number.h"
 #include "esphome/components/uart/uart.h"
 #include "esphome/core/automation.h"
 #include "esphome/core/component.h"
@@ -54,6 +55,8 @@ ANERN_SOLAR_EVO_VALUED_ENTITY_(text_sensor::TextSensor, name, polling_command, v
 #define ANERN_SOLAR_EVO_TEXT_SENSOR(name, polling_command) ANERN_SOLAR_EVO_ENTITY_(text_sensor::TextSensor, name, polling_command)
 #define ANERN_SOLAR_EVO_SELECT(name, polling_command, value_type) \
 ANERN_SOLAR_EVO_VALUED_ENTITY_(select::Select, name, polling_command, value_type)
+#define ANERN_SOLAR_EVO_NUMBER(name, polling_command, value_type) \
+ANERN_SOLAR_EVO_VALUED_ENTITY_(number::Number, name, polling_command, value_type)
 
 class AnernSolarEvo : public uart::UARTDevice, public PollingComponent {
   // QPIGS values
@@ -101,7 +104,6 @@ class AnernSolarEvo : public uart::UARTDevice, public PollingComponent {
   ANERN_SOLAR_EVO_SENSOR(ac_output_rating_active_power, QPIRI, int)
   ANERN_SOLAR_EVO_SENSOR(battery_rating_voltage, QPIRI, float)
   ANERN_SOLAR_EVO_SENSOR(battery_recharge_voltage, QPIRI, float)
-  ANERN_SOLAR_EVO_SENSOR(battery_under_voltage, QPIRI, float)
   ANERN_SOLAR_EVO_SENSOR(battery_bulk_voltage, QPIRI, float)
   ANERN_SOLAR_EVO_SENSOR(battery_float_voltage, QPIRI, float)
   ANERN_SOLAR_EVO_SENSOR(current_max_ac_charging_current, QPIRI, int)
@@ -121,6 +123,8 @@ class AnernSolarEvo : public uart::UARTDevice, public PollingComponent {
   ANERN_SOLAR_EVO_SELECT(charger_source_priority, QPIRI, int)
   ANERN_SOLAR_EVO_SELECT(pv_power_balance, QPIRI, int)
   ANERN_SOLAR_EVO_SELECT(pv_ok_condition_for_parallel, QPIRI, int)
+  // number
+  ANERN_SOLAR_EVO_NUMBER(battery_under_voltage, QPIRI, float)
 
   // QMOD values
   ANERN_SOLAR_EVO_VALUED_TEXT_SENSOR(device_mode, QMOD, char)

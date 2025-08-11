@@ -1,0 +1,65 @@
+import esphome.codegen as cg
+from esphome.components import number
+import esphome.config_validation as cv
+from esphome.const import (
+    CONF_ID,
+    CONF_DEVICE_CLASS,
+    CONF_UNIT_OF_MEASUREMENT,
+    DEVICE_CLASS_VOLTAGE,
+    UNIT_VOLT,
+)
+
+from .. import CONF_ANERN_SOLAR_EVO_ID, ANERN_SOLAR_EVO_COMPONENT_SCHEMA, anern_solar_evo_ns
+
+DEPENDENCIES = ["anern_solar_evo"]
+
+CONF_BATTERY_UNDER_VOLTAGE = "battery_under_voltage"
+
+AnernSolarEvoNumber = anern_solar_evo_ns.class_("AnernSolarEvoNumber", number.Number, cg.Component)
+
+TYPES = {
+    CONF_BATTERY_UNDER_VOLTAGE: {
+        "command": "PSDV%04.1f",
+        "min_value": 40.0,
+        "max_value": 48.0,
+        "step": 0.1,
+        "device_class": DEVICE_CLASS_VOLTAGE,
+        "unit_of_measurement": UNIT_VOLT,
+    },
+    # You can add other number configurations here
+}
+
+CONFIG_SCHEMA = ANERN_SOLAR_EVO_COMPONENT_SCHEMA.extend(
+    {
+      cv.Optional(type): number.number_schema(AnernSolarEvoNumber).extend(
+          {
+              cv.GenerateID(): cv.declare_id(AnernSolarEvoNumber),
+              cv.Optional("min_value", default=conf["min_value"]): cv.float_,
+              cv.Optional("max_value", default=conf["max_value"]): cv.float_,
+              cv.Optional("step", default=conf["step"]): cv.float_,
+              cv.Optional(
+                  CONF_DEVICE_CLASS, default=conf["device_class"]
+              ): cv.string,
+              cv.Optional(
+                  CONF_UNIT_OF_MEASUREMENT, default=conf["unit_of_measurement"]
+              ): cv.string,
+          }
+      ).extend(cv.COMPONENT_SCHEMA)
+      for type, conf in TYPES.items()    }
+)
+
+async def to_code(config):
+    paren = await cg.get_variable(config[CONF_ANERN_SOLAR_EVO_ID])
+    for type, conf_data in TYPES.items():
+        if type in config:
+            conf = config[type]
+            var = await number.new_number(
+                conf,
+                min_value=conf["min_value"],
+                max_value=conf["max_value"],
+                step=conf["step"],
+            )
+            await cg.register_component(var, conf)
+            cg.add(getattr(paren, f"set_{type}")(var))
+            cg.add(var.set_parent(paren))
+            cg.add(var.set_set_command(conf_data["command"]))
