@@ -7,11 +7,11 @@ from .. import CONF_ANERN_SOLAR_EVO_ID, ANERN_SOLAR_EVO_COMPONENT_SCHEMA, anern_
 
 DEPENDENCIES = ["uart"]
 
-# CONF_PV_OK_CONDITION_FOR_PARALLEL = "pv_ok_condition_for_parallel"
+CONF_ALARM_ON_WHEN_PRIMARY_SOURCE_INTERRUPT = "alarm_on_when_primary_source_interrupt"
 
-# TYPES = {
-#     CONF_PV_OK_CONDITION_FOR_PARALLEL: ("PPVOKC1", "PPVOKC0"),
-# }
+TYPES = {
+  CONF_ALARM_ON_WHEN_PRIMARY_SOURCE_INTERRUPT: ("PEy", "PDy"),
+}
 
 AnernSolarEvoSwitch = anern_solar_evo_ns.class_("AnernSolarEvoSwitch", switch.Switch, cg.Component)
 
@@ -32,7 +32,7 @@ async def to_code(config):
             conf = config[type]
             var = await switch.new_switch(conf)
             await cg.register_component(var, conf)
-            cg.add(getattr(paren, f"set_{type}_switch")(var))
+            cg.add(getattr(paren, f"set_{type}")(var))
             cg.add(var.set_parent(paren))
             cg.add(var.set_on_command(on))
             if off is not None:

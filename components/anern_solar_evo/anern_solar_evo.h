@@ -48,6 +48,8 @@ struct PollingCommand {
 #define ANERN_SOLAR_EVO_SENSOR(name, polling_command, value_type) \
 ANERN_SOLAR_EVO_VALUED_ENTITY_(sensor::Sensor, name, polling_command, value_type)
 #define ANERN_SOLAR_EVO_SWITCH(name, polling_command) ANERN_SOLAR_EVO_ENTITY_(switch_::Switch, name, polling_command)
+#define ANERN_SOLAR_EVO_VALUED_SWITCH(name, polling_command, value_type) \
+ANERN_SOLAR_EVO_VALUED_ENTITY_(switch_::Switch, name, polling_command, value_type)
 #define ANERN_SOLAR_EVO_BINARY_SENSOR(name, polling_command, value_type) \
 ANERN_SOLAR_EVO_VALUED_ENTITY_(binary_sensor::BinarySensor, name, polling_command, value_type)
 #define ANERN_SOLAR_EVO_VALUED_TEXT_SENSOR(name, polling_command, value_type) \
@@ -138,9 +140,10 @@ class AnernSolarEvo : public uart::UARTDevice, public PollingComponent {
   ANERN_SOLAR_EVO_BINARY_SENSOR(overload_restart_function, QFLAG, int)
   ANERN_SOLAR_EVO_BINARY_SENSOR(over_temperature_restart_function, QFLAG, int)
   ANERN_SOLAR_EVO_BINARY_SENSOR(backlight_on, QFLAG, int)
-  ANERN_SOLAR_EVO_BINARY_SENSOR(alarm_on_when_primary_source_interrupt, QFLAG, int)
   ANERN_SOLAR_EVO_BINARY_SENSOR(fault_code_record, QFLAG, int)
   ANERN_SOLAR_EVO_BINARY_SENSOR(power_saving, QFLAG, int)
+  // Switch
+  ANERN_SOLAR_EVO_VALUED_SWITCH(alarm_on_when_primary_source_interrupt, QFLAG, int)
 
   // QPIWS values
   ANERN_SOLAR_EVO_BINARY_SENSOR(warnings_present, QPIWS, bool)
