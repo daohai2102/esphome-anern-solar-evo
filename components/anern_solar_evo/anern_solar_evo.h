@@ -106,7 +106,6 @@ class AnernSolarEvo : public uart::UARTDevice, public PollingComponent {
   ANERN_SOLAR_EVO_SENSOR(battery_recharge_voltage, QPIRI, float)
   ANERN_SOLAR_EVO_SENSOR(battery_bulk_voltage, QPIRI, float)
   ANERN_SOLAR_EVO_SENSOR(battery_float_voltage, QPIRI, float)
-  ANERN_SOLAR_EVO_SENSOR(current_max_ac_charging_current, QPIRI, int)
   ANERN_SOLAR_EVO_SENSOR(parallel_max_num, QPIRI, int)
   ANERN_SOLAR_EVO_SENSOR(machine_type, QPIRI, int)
   ANERN_SOLAR_EVO_SENSOR(topology, QPIRI, int)
@@ -125,6 +124,7 @@ class AnernSolarEvo : public uart::UARTDevice, public PollingComponent {
   // number
   ANERN_SOLAR_EVO_NUMBER(battery_under_voltage, QPIRI, float)
   ANERN_SOLAR_EVO_NUMBER(current_max_charging_current, QPIRI, int)
+  ANERN_SOLAR_EVO_NUMBER(current_max_ac_charging_current, QPIRI, int)
 
   // QMOD values
   ANERN_SOLAR_EVO_VALUED_TEXT_SENSOR(device_mode, QMOD, char)

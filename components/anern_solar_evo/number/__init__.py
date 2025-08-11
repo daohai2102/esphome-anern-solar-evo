@@ -17,6 +17,7 @@ DEPENDENCIES = ["anern_solar_evo"]
 
 CONF_BATTERY_UNDER_VOLTAGE = "battery_under_voltage"
 CONF_CURRENT_MAX_CHARGING_CURRENT = "current_max_charging_current"
+CONF_CURRENT_MAX_AC_CHARGING_CURRENT = "current_max_ac_charging_current"
 
 AnernSolarEvoNumber = anern_solar_evo_ns.class_("AnernSolarEvoNumber", number.Number, cg.Component)
 
@@ -37,7 +38,14 @@ TYPES = {
         "device_class": DEVICE_CLASS_CURRENT,
         "unit_of_measurement": UNIT_AMPERE,
     },
-    # You can add other number configurations here
+    CONF_CURRENT_MAX_AC_CHARGING_CURRENT: {
+        "command": "MUCHGC0%02.0f",
+        "min_value": 10.0,
+        "max_value": 90.0,
+        "step": 10.0,
+        "device_class": DEVICE_CLASS_CURRENT,
+        "unit_of_measurement": UNIT_AMPERE,
+    },
 }
 
 CONFIG_SCHEMA = ANERN_SOLAR_EVO_COMPONENT_SCHEMA.extend(

@@ -35,7 +35,6 @@ CONF_BATTERY_RECHARGE_VOLTAGE = "battery_recharge_voltage"
 CONF_BATTERY_BULK_VOLTAGE = "battery_bulk_voltage"
 CONF_BATTERY_FLOAT_VOLTAGE = "battery_float_voltage"
 CONF_BATTERY_TYPE = "battery_type"
-CONF_CURRENT_MAX_AC_CHARGING_CURRENT = "current_max_ac_charging_current"
 CONF_PARALLEL_MAX_NUM = "parallel_max_num"
 CONF_MACHINE_TYPE = "machine_type"
 CONF_TOPOLOGY = "topology"
@@ -124,11 +123,6 @@ TYPES = {
         unit_of_measurement=UNIT_VOLT,
         accuracy_decimals=1,
         device_class=DEVICE_CLASS_VOLTAGE,
-    ),
-    CONF_CURRENT_MAX_AC_CHARGING_CURRENT: sensor.sensor_schema(
-        unit_of_measurement=UNIT_AMPERE,
-        accuracy_decimals=1,
-        device_class=DEVICE_CLASS_CURRENT,
     ),
     CONF_PARALLEL_MAX_NUM: sensor.sensor_schema(
         accuracy_decimals=1,

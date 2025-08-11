@@ -32,8 +32,6 @@ CONF_POSSIBLE_VALUES = "possible_values"
 CONF_BATTERY_RECHARGE_VOLTAGE = "battery_recharge_voltage"
 CONF_BATTERY_UNDER_VOLTAGE = "battery_under_voltage"
 CONF_BATTERY_FLOAT_VOLTAGE = "battery_float_voltage"
-CONF_CURRENT_MAX_AC_CHARGING_CURRENT = "current_max_ac_charging_current"
-CONF_CURRENT_MAX_CHARGING_CURRENT = "current_max_charging_current"
 CONF_BATTERY_REDISCHARGE_VOLTAGE = "battery_redischarge_voltage"
 
 TYPES = {
@@ -46,8 +44,6 @@ TYPES = {
         "PSDV%02.1f",
     ),
     CONF_BATTERY_FLOAT_VOLTAGE: ([48.0, 49.0, 50.0, 51.0], "PBFT%02.1f"),
-    CONF_CURRENT_MAX_AC_CHARGING_CURRENT: ([2, 10, 20], "MUCHGC0%02.0f"),
-    CONF_CURRENT_MAX_CHARGING_CURRENT: ([10, 20, 30, 40], "MCHGC0%02.0f"),
     CONF_BATTERY_REDISCHARGE_VOLTAGE: (
         [0, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58],
         "PBDV%02.1f",
