@@ -872,26 +872,34 @@ void AnernSolarEvo::add_polling_command_(const char *command, ENUMPollingCommand
 }
 
 uint16_t AnernSolarEvo::anern_solar_crc__evo(uint8_t *msg, uint8_t len) {
-  // 1. Calculate the base CRC using the standard ESPHome helper
-  uint16_t crc = crc16be(msg, len);
+    uint16_t crc = 0;
 
-  // 2. Get the high and low bytes of the calculated CRC
-  uint8_t crc_low = crc & 0xff;
-  uint8_t crc_high = crc >> 8;
+    for (int i = 0; i < len; i++) {
+        crc ^= (uint16_t)msg[i] << 8;
+        for (int j = 0; j < 8; j++) {
+            if (crc & 0x8000) {
+                crc = (crc << 1) ^ 0x1021;
+            } else {
+                crc <<= 1;
+            }
+        }
+    }
 
-  // 3. Robustly escape the forbidden characters using a while loop.
-  // This ensures that if an increment results in another forbidden
-  // character (e.g., 0x0c -> 0x0d), it is handled correctly.
-  while (crc_low == 0x28 || crc_low == 0x0d || crc_low == 0x0a) {
-    crc_low++;
-  }
-  while (crc_high == 0x28 || crc_high == 0x0d || crc_high == 0x0a) {
-    crc_high++;
-  }
+    // After the correct base CRC is calculated, apply the required
+    // character escaping for this specific inverter protocol.
+    uint8_t crc_low = crc & 0xff;
+    uint8_t crc_high = crc >> 8;
 
-  // 4. Recombine the potentially modified bytes into the final CRC
-  crc = (crc_high << 8) | crc_low;
-  return crc;
+    if (crc_low == 0x28 || crc_low == 0x0d || crc_low == 0x0a) {
+        crc_low++;
+    }
+    if (crc_high == 0x28 || crc_high == 0x0d || crc_high == 0x0a) {
+        crc_high++;
+    }
+
+    // Recombine the bytes into the final CRC to be sent/checked.
+    crc = (crc_high << 8) | crc_low;
+    return crc;
 }
 
 }  // namespace anern_solar_evo
