@@ -872,13 +872,24 @@ void AnernSolarEvo::add_polling_command_(const char *command, ENUMPollingCommand
 }
 
 uint16_t AnernSolarEvo::anern_solar_crc__evo(uint8_t *msg, uint8_t len) {
-  uint16_t crc = crc16be(msg, len); // Use the original ESPHome helper function
+  // 1. Calculate the base CRC using the standard ESPHome helper
+  uint16_t crc = crc16be(msg, len);
+
+  // 2. Get the high and low bytes of the calculated CRC
   uint8_t crc_low = crc & 0xff;
   uint8_t crc_high = crc >> 8;
-  if (crc_low == 0x28 || crc_low == 0x0d || crc_low == 0x0a)
+
+  // 3. Robustly escape the forbidden characters using a while loop.
+  // This ensures that if an increment results in another forbidden
+  // character (e.g., 0x0c -> 0x0d), it is handled correctly.
+  while (crc_low == 0x28 || crc_low == 0x0d || crc_low == 0x0a) {
     crc_low++;
-  if (crc_high == 0x28 || crc_high == 0x0d || crc_high == 0x0a)
+  }
+  while (crc_high == 0x28 || crc_high == 0x0d || crc_high == 0x0a) {
     crc_high++;
+  }
+
+  // 4. Recombine the potentially modified bytes into the final CRC
   crc = (crc_high << 8) | crc_low;
   return crc;
 }
