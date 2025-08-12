@@ -737,22 +737,28 @@ uint8_t AnernSolarEvo::check_incoming_length_(uint8_t length) {
 uint8_t AnernSolarEvo::check_incoming_crc_() {
   uint16_t crc16;
 
-  // The CRC is calculated on the message payload, which starts *after* the leading '('.
-  // The length for the CRC is the total received characters (read_pos_) minus 4
-  // (the '(', the 2 CRC bytes, and the final null terminator).
-  crc16 = this->anern_solar_crc__evo(read_buffer_ + 1, read_pos_ - 4);
+  // The CRC for received messages is calculated on the entire payload,
+  // including the leading '('. The length is the total bytes received
+  // minus the 3 trailing bytes (2 for CRC, 1 for carriage return).
+  crc16 = this->anern_solar_crc__evo(read_buffer_, read_pos_ - 3);
 
   ESP_LOGD(TAG, "checking crc on incoming message");
+
+  // Compare the calculated CRC with the received CRC bytes
   if (((uint8_t) ((crc16) >> 8)) == read_buffer_[read_pos_ - 3] &&
       ((uint8_t) ((crc16) &0xff)) == read_buffer_[read_pos_ - 2]) {
     ESP_LOGD(TAG, "CRC OK");
-    read_buffer_[read_pos_ - 1] = 0;
+    read_buffer_[read_pos_ - 1] = 0; // Null terminate before CRC
     read_buffer_[read_pos_ - 2] = 0;
     read_buffer_[read_pos_ - 3] = 0;
     return 1;
   }
-  ESP_LOGD(TAG, "CRC NOK expected: %X %X but got: %X %X", ((uint8_t) ((crc16) >> 8)), ((uint8_t) ((crc16) &0xff)),
+
+  // Log an error if they don't match
+  ESP_LOGW(TAG, "CRC NOK! Expected: %02X %02X, Got: %02X %02X",
+           (uint8_t)(crc16 >> 8), (uint8_t)(crc16 & 0xFF),
            read_buffer_[read_pos_ - 3], read_buffer_[read_pos_ - 2]);
+
   return 0;
 }
 
