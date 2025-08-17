@@ -306,7 +306,11 @@ void AnernSolarEvo::loop() {
           this->battery_discharge_power_->publish_state(battery_discharge_power);
         }
         if (this->grid_power_) {
-          int grid_power = value_ac_output_apparent_power_ + (value_battery_charging_current_ * value_battery_voltage_) - value_pv_charging_power_ - (value_battery_discharge_current_ * value_battery_voltage_);
+          // Add 50 as the average power of the inverter itself
+          int grid_power = 50 + value_ac_output_apparent_power_ + (value_battery_charging_current_ * value_battery_voltage_) - value_pv_charging_power_ - (value_battery_discharge_current_ * value_battery_voltage_);
+          if (grid_power < 0) {
+            grid_power = 0;
+          }
           this->grid_power_->publish_state(grid_power);
         }
         this->state_ = STATE_IDLE;
