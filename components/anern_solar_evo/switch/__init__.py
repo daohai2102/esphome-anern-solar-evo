@@ -9,10 +9,18 @@ DEPENDENCIES = ["uart"]
 
 CONF_ALARM_ON_WHEN_PRIMARY_SOURCE_INTERRUPT = "alarm_on_when_primary_source_interrupt"
 CONF_OVERLOAD_RESTART_FUNCTION = "overload_restart_function"
+CONF_SILENCE_BUZZER_OPEN_BUZZER = "silence_buzzer_open_buzzer"
+CONF_BACKLIGHT_ON = "backlight_on"
+CONF_LCD_ESCAPE_TO_DEFAULT = "lcd_escape_to_default"
+CONF_OVER_TEMPERATURE_RESTART_FUNCTION = "over_temperature_restart_function"
 
 TYPES = {
   CONF_ALARM_ON_WHEN_PRIMARY_SOURCE_INTERRUPT: ("PEy", "PDy"),
   CONF_OVERLOAD_RESTART_FUNCTION: ("PEu", "PDu"),
+  CONF_SILENCE_BUZZER_OPEN_BUZZER: ("PEa", "PDa"),
+  CONF_BACKLIGHT_ON: ("PEx", "PDx"),
+  CONF_LCD_ESCAPE_TO_DEFAULT: ("PEk", "PDk"),
+  CONF_OVER_TEMPERATURE_RESTART_FUNCTION: ("PEv", "PDv"),
 }
 
 AnernSolarEvoSwitch = anern_solar_evo_ns.class_("AnernSolarEvoSwitch", switch.Switch, cg.Component)

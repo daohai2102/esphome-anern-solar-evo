@@ -134,12 +134,12 @@ class AnernSolarEvo : public uart::UARTDevice, public PollingComponent {
   ANERN_SOLAR_EVO_VALUED_TEXT_SENSOR(serial_number, QID, std::string)
 
   // QFLAG values
-  ANERN_SOLAR_EVO_BINARY_SENSOR(silence_buzzer_open_buzzer, QFLAG, int)
+  ANERN_SOLAR_EVO_VALUED_SWITCH(silence_buzzer_open_buzzer, QFLAG, int)
   ANERN_SOLAR_EVO_BINARY_SENSOR(overload_bypass_function, QFLAG, int)
-  ANERN_SOLAR_EVO_BINARY_SENSOR(lcd_escape_to_default, QFLAG, int)
+  ANERN_SOLAR_EVO_VALUED_SWITCH(lcd_escape_to_default, QFLAG, int)
   ANERN_SOLAR_EVO_VALUED_SWITCH(overload_restart_function, QFLAG, int)
-  ANERN_SOLAR_EVO_BINARY_SENSOR(over_temperature_restart_function, QFLAG, int)
-  ANERN_SOLAR_EVO_BINARY_SENSOR(backlight_on, QFLAG, int)
+  ANERN_SOLAR_EVO_VALUED_SWITCH(over_temperature_restart_function, QFLAG, int)
+  ANERN_SOLAR_EVO_VALUED_SWITCH(backlight_on, QFLAG, int)
   ANERN_SOLAR_EVO_BINARY_SENSOR(fault_code_record, QFLAG, int)
   ANERN_SOLAR_EVO_BINARY_SENSOR(power_saving, QFLAG, int)
   // Switch
