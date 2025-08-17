@@ -8,9 +8,11 @@ from .. import CONF_ANERN_SOLAR_EVO_ID, ANERN_SOLAR_EVO_COMPONENT_SCHEMA, anern_
 DEPENDENCIES = ["uart"]
 
 CONF_ALARM_ON_WHEN_PRIMARY_SOURCE_INTERRUPT = "alarm_on_when_primary_source_interrupt"
+CONF_OVERLOAD_RESTART_FUNCTION = "overload_restart_function"
 
 TYPES = {
   CONF_ALARM_ON_WHEN_PRIMARY_SOURCE_INTERRUPT: ("PEy", "PDy"),
+  CONF_OVERLOAD_RESTART_FUNCTION: ("PEu", "PDu"),
 }
 
 AnernSolarEvoSwitch = anern_solar_evo_ns.class_("AnernSolarEvoSwitch", switch.Switch, cg.Component)
