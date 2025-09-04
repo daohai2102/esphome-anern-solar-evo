@@ -44,9 +44,9 @@ TYPES = {
     },
     CONF_CURRENT_MAX_AC_CHARGING_CURRENT: {
         "command": "MUCHGC0%02.0f",
-        "min_value": 10.0,
+        "min_value": 2.0,
         "max_value": 90.0,
-        "step": 10.0,
+        "step": 1.0,
         "device_class": DEVICE_CLASS_CURRENT,
         "unit_of_measurement": UNIT_AMPERE,
     },
