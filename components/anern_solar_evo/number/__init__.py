@@ -35,7 +35,7 @@ TYPES = {
         "unit_of_measurement": UNIT_VOLT,
     },
     CONF_CURRENT_MAX_CHARGING_CURRENT: {
-        "command": "MCHGC0%02.0f",
+        "command": "MNCHGC0%02.0f",
         "min_value": 10.0,
         "max_value": 90.0,
         "step": 10.0,
