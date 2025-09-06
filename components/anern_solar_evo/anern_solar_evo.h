@@ -9,6 +9,7 @@
 #include "esphome/components/uart/uart.h"
 #include "esphome/core/automation.h"
 #include "esphome/core/component.h"
+#include <vector>  // New include for std::vector
 
 namespace esphome {
 namespace anern_solar_evo {
@@ -200,6 +201,14 @@ class AnernSolarEvo : public uart::UARTDevice, public PollingComponent {
   void dump_config() override;
   void update() override;
 
+  // Start of new public section
+ public:
+  // Function to set priority commands from Python config
+  void set_priority_polling_commands(const std::vector<ENUMPollingCommand> &commands) {
+    this->priority_polling_commands_ = commands;
+  }
+  // End of new public section
+
  protected:
   static const size_t ANERN_SOLAR_EVO_READ_BUFFER_LENGTH = 120;  // maximum supported answer length
   static const size_t COMMAND_QUEUE_LENGTH = 10;
@@ -230,8 +239,27 @@ class AnernSolarEvo : public uart::UARTDevice, public PollingComponent {
     STATE_POLL_DECODED = 6,
   };
 
+  // Start of polling logic variables replacement
+  void initialize_polling_logic_();
   uint8_t last_polling_command_ = 0;
   PollingCommand used_polling_commands_[15];
+
+  // A vector to store the priority commands configured via YAML
+  std::vector<ENUMPollingCommand> priority_polling_commands_{};
+  // A vector to store the indices of normal (non-priority) commands
+  std::vector<uint8_t> normal_command_indices_{};
+  // A vector to store the indices of priority commands
+  std::vector<uint8_t> priority_command_indices_{};
+
+  // Flag to ensure the polling logic is initialized only once
+  bool polling_logic_initialized_ = false;
+  // Cursor to track the next normal command to be sent
+  uint8_t normal_poll_cursor_ = 0;
+  // Cursor to track the next priority command to be sent
+  uint8_t priority_poll_cursor_ = 0;
+  // Flag to determine if the next poll should be from the priority list
+  bool next_is_priority_cycle_ = false;
+  // End of polling logic variables replacement
 };
 
 }  // namespace anern_solar_evo

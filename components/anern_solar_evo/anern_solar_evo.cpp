@@ -2,11 +2,12 @@
 #include "esphome/core/helpers.h"
 #include "esphome/core/log.h"
 #include "select/anern_solar_evo_select.h"
+#include <algorithm> // New include for std::find
 
 namespace esphome {
 namespace anern_solar_evo {
 
-  static const char *const TAG = "anern_solar_evo";
+static const char *const TAG = "anern_solar_evo";
 
 void AnernSolarEvo::setup() {
   this->state_ = STATE_IDLE;
@@ -19,6 +20,40 @@ void AnernSolarEvo::empty_uart_buffer_() {
     this->read_byte(&byte);
   }
 }
+
+// Start of new helper function
+// This function runs once to separate used commands into normal and priority lists
+void AnernSolarEvo::initialize_polling_logic_() {
+  if (this->polling_logic_initialized_) {
+    return;
+  }
+
+  // Separate the used commands into normal and priority lists based on YAML config
+  for (uint8_t i = 0; i < 15; i++) {
+    if (this->used_polling_commands_[i].length > 0) {
+      ENUMPollingCommand current_id = this->used_polling_commands_[i].identifier;
+      // Check if the current command's ID is in the priority list
+      bool is_priority = std::find(this->priority_polling_commands_.begin(), this->priority_polling_commands_.end(),
+                                    current_id) != this->priority_polling_commands_.end();
+      if (is_priority) {
+        this->priority_command_indices_.push_back(i);
+      } else {
+        this->normal_command_indices_.push_back(i);
+      }
+    }
+  }
+
+  // Edge case: if there are no normal commands, treat priority commands as normal to ensure polling happens
+  if (this->normal_command_indices_.empty() && !this->priority_command_indices_.empty()) {
+    this->normal_command_indices_ = this->priority_command_indices_;
+    this->priority_command_indices_.clear();
+  }
+
+  // The first cycle should be a priority cycle if priority commands exist
+  this->next_is_priority_cycle_ = !this->priority_command_indices_.empty();
+  this->polling_logic_initialized_ = true;
+}
+// End of new helper function
 
 void AnernSolarEvo::loop() {
   // --- State: STATE_IDLE ---
@@ -842,14 +877,50 @@ uint8_t AnernSolarEvo::send_next_command_() {
   return 0;
 }
 
+// Start of completely replaced function
 void AnernSolarEvo::send_next_poll_() {
-  uint16_t crc16;
-  this->last_polling_command_ = (this->last_polling_command_ + 1) % 15;
-  if (this->used_polling_commands_[this->last_polling_command_].length == 0) {
-    this->last_polling_command_ = 0;
+  this->initialize_polling_logic_();
+
+  uint8_t command_index_to_send = 0xFF; // 0xFF means no command to send
+
+  if (this->normal_command_indices_.empty() && this->priority_command_indices_.empty()) {
+    return; // No polling commands configured at all
   }
+
+  // If there are no priority commands, just cycle through the normal ones
+  if (this->priority_command_indices_.empty()) {
+    if (!this->normal_command_indices_.empty()) {
+      command_index_to_send = this->normal_command_indices_[this->normal_poll_cursor_];
+      this->normal_poll_cursor_ = (this->normal_poll_cursor_ + 1) % this->normal_command_indices_.size();
+    }
+  } else { // Advanced logic with priority commands
+    if (this->next_is_priority_cycle_) {
+      command_index_to_send = this->priority_command_indices_[this->priority_poll_cursor_];
+      this->priority_poll_cursor_++;
+
+      // If we've finished a full priority cycle, the next one is a normal command
+      if (this->priority_poll_cursor_ >= this->priority_command_indices_.size()) {
+        this->priority_poll_cursor_ = 0;
+        this->next_is_priority_cycle_ = false;
+      }
+    } else {
+      if (!this->normal_command_indices_.empty()) {
+        command_index_to_send = this->normal_command_indices_[this->normal_poll_cursor_];
+        this->normal_poll_cursor_ = (this->normal_poll_cursor_ + 1) % this->normal_command_indices_.size();
+      }
+      // After sending a normal command, the next cycle is a priority one
+      this->next_is_priority_cycle_ = true;
+    }
+  }
+
+  if (command_index_to_send == 0xFF) {
+    return;
+  }
+
+  // The rest of this function sends the selected command over UART
+  uint16_t crc16;
+  this->last_polling_command_ = command_index_to_send;
   if (this->used_polling_commands_[this->last_polling_command_].length == 0) {
-    // no command specified
     return;
   }
   this->state_ = STATE_POLL;
@@ -857,18 +928,19 @@ void AnernSolarEvo::send_next_poll_() {
   this->empty_uart_buffer_();
   this->read_pos_ = 0;
   crc16 = this->anern_solar_crc__evo(this->used_polling_commands_[this->last_polling_command_].command,
-                              this->used_polling_commands_[this->last_polling_command_].length);
+                                     this->used_polling_commands_[this->last_polling_command_].length);
   this->write_array(this->used_polling_commands_[this->last_polling_command_].command,
                     this->used_polling_commands_[this->last_polling_command_].length);
   // checksum
-  this->write(((uint8_t) ((crc16) >> 8)));   // highbyte
-  this->write(((uint8_t) ((crc16) &0xff)));  // lowbyte
+  this->write(((uint8_t)((crc16) >> 8)));   // highbyte
+  this->write(((uint8_t)((crc16) & 0xff)));  // lowbyte
   // end Byte
   this->write(0x0D);
   ESP_LOGD(TAG, "Sending polling command : %s with length %d",
            this->used_polling_commands_[this->last_polling_command_].command,
            this->used_polling_commands_[this->last_polling_command_].length);
 }
+// End of completely replaced function
 
 void AnernSolarEvo::queue_command_(const char *command, uint8_t length) {
   uint8_t next_position = command_queue_position_;
