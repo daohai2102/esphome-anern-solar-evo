@@ -9,7 +9,7 @@ static const char *const TAG = "anern_solar_evo.select";
 void AnernSolarEvoSelect::control(const std::string &value) {
   for (auto const &[key, val] : this->options_) {
     if (key == value) {
-      this->parent_->switch_command(this->command_ + val);
+      this->parent_->switch_command(this->command_ + val, this->query_command_);
     }
   }
 }

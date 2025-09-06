@@ -53,6 +53,39 @@ void AnernSolarEvo::initialize_polling_logic_() {
   this->next_is_priority_cycle_ = !this->priority_command_indices_.empty();
   this->polling_logic_initialized_ = true;
 }
+
+void AnernSolarEvo::send_specific_poll_(const std::string &command) {
+  this->initialize_polling_logic_();
+
+  uint8_t command_index_to_send = 0xFF;
+  for (size_t i = 0; i < 15; ++i) {
+    if (this->used_polling_commands_[i].length > 0 && command == (char*)this->used_polling_commands_[i].command) {
+      command_index_to_send = i;
+      break;
+    }
+  }
+
+  if (command_index_to_send == 0xFF) {
+    ESP_LOGW(TAG, "Poll command '%s' not found or not enabled.", command.c_str());
+    return;
+  }
+
+  uint16_t crc16;
+  this->last_polling_command_ = command_index_to_send;
+  this->state_ = STATE_POLL;
+  this->command_start_millis_ = millis();
+  this->empty_uart_buffer_();
+  this->read_pos_ = 0;
+  crc16 = this->anern_solar_crc__evo(this->used_polling_commands_[this->last_polling_command_].command,
+                                     this->used_polling_commands_[this->last_polling_command_].length);
+  this->write_array(this->used_polling_commands_[this->last_polling_command_].command,
+                    this->used_polling_commands_[this->last_polling_command_].length);
+  this->write(((uint8_t)((crc16) >> 8)));
+  this->write(((uint8_t)((crc16) & 0xff)));
+  this->write(0x0D);
+  ESP_LOGD(TAG, "Sending specific poll command: %s", command.c_str());
+}
+
 // End of new helper function
 
 void AnernSolarEvo::loop() {
@@ -60,6 +93,13 @@ void AnernSolarEvo::loop() {
   // In idle state, we check if we need to send a command from the queue or a scheduled poll.
   if (this->state_ == STATE_IDLE) {
     this->empty_uart_buffer_();
+
+    if (!this->high_priority_poll_command_.empty()) {
+        this->send_specific_poll_(this->high_priority_poll_command_);
+        this->high_priority_poll_command_ = ""; // Clear after sending
+        return; // Wait for the next loop
+    }
+
     if (this->send_next_command_() == 0) { // If no command was sent from the queue
       // Time to send a poll command
       if (millis() - this->last_poll_ > this->update_interval_) {
@@ -107,8 +147,9 @@ void AnernSolarEvo::loop() {
         if (this->state_ == STATE_POLL) {
           ESP_LOGW(TAG, "Timeout waiting for poll response for: %s", (char *)this->used_polling_commands_[this->last_polling_command_].command);
         } else { // STATE_COMMAND
-          ESP_LOGW(TAG, "Timeout waiting for command response for: %s", this->command_queue_[this->command_queue_position_].c_str());
-          this->command_queue_[this->command_queue_position_] = "";
+          ESP_LOGW(TAG, "Timeout waiting for command response for: %s", this->command_queue_[this->command_queue_position_].command.c_str());
+          this->command_queue_[this->command_queue_position_].command = "";
+          this->command_queue_[this->command_queue_position_].query_after = "";
           this->command_queue_position_ = (this->command_queue_position_ + 1) % COMMAND_QUEUE_LENGTH;
         }
         this->state_ = STATE_IDLE;
@@ -124,13 +165,18 @@ void AnernSolarEvo::loop() {
       if (this->check_incoming_crc_()) {
         if (this->read_buffer_[1] == 'A' && this->read_buffer_[2] == 'C' && this->read_buffer_[3] == 'K') {
           ESP_LOGD(TAG, "Command successful: %s", this->read_buffer_);
+          // If there's a follow-up query, queue it for high-priority execution
+          if (!this->command_queue_[this->command_queue_position_].query_after.empty()) {
+            this->high_priority_poll_command_ = this->command_queue_[this->command_queue_position_].query_after;
+          }
         } else {
           ESP_LOGW(TAG, "Command failed (NAK): %s", this->read_buffer_);
         }
       } else {
         ESP_LOGW(TAG, "Received command response with invalid CRC.");
       }
-      this->command_queue_[this->command_queue_position_] = "";
+      this->command_queue_[this->command_queue_position_].command = "";
+      this->command_queue_[this->command_queue_position_].query_after = "";
       this->command_queue_position_ = (this->command_queue_position_ + 1) % COMMAND_QUEUE_LENGTH;
       this->state_ = STATE_IDLE;
   }
@@ -806,10 +852,11 @@ void AnernSolarEvo::loop() {
   if (this->state_ == STATE_COMMAND) {
     if (millis() - this->command_start_millis_ > esphome::anern_solar_evo::AnernSolarEvo::COMMAND_TIMEOUT) {
       // command timeout
-      const char *command = this->command_queue_[this->command_queue_position_].c_str();
+      const char *command = this->command_queue_[this->command_queue_position_].command.c_str();
       this->command_start_millis_ = millis();
       ESP_LOGD(TAG, "timeout command from queue: %s", command);
-      this->command_queue_[this->command_queue_position_] = std::string("");
+      this->command_queue_[this->command_queue_position_].command = "";
+      this->command_queue_[this->command_queue_position_].query_after = "";
       this->command_queue_position_ = (command_queue_position_ + 1) % COMMAND_QUEUE_LENGTH;
       this->state_ = STATE_IDLE;
       return;
@@ -853,12 +900,12 @@ uint8_t AnernSolarEvo::check_incoming_crc_() {
 // send next command used
 uint8_t AnernSolarEvo::send_next_command_() {
   uint16_t crc16;
-  if (!this->command_queue_[this->command_queue_position_].empty()) {
-    const char *command = this->command_queue_[this->command_queue_position_].c_str();
+  if (!this->command_queue_[this->command_queue_position_].command.empty()) {
+    const char *command = this->command_queue_[this->command_queue_position_].command.c_str();
     uint8_t byte_command[16];
-    uint8_t length = this->command_queue_[this->command_queue_position_].length();
+    uint8_t length = this->command_queue_[this->command_queue_position_].command.length();
     for (uint8_t i = 0; i < length; i++) {
-      byte_command[i] = (uint8_t) this->command_queue_[this->command_queue_position_].at(i);
+      byte_command[i] = (uint8_t) this->command_queue_[this->command_queue_position_].command.at(i);
     }
     this->state_ = STATE_COMMAND;
     this->command_start_millis_ = millis();
@@ -942,23 +989,28 @@ void AnernSolarEvo::send_next_poll_() {
 }
 // End of completely replaced function
 
-void AnernSolarEvo::queue_command_(const char *command, uint8_t length) {
+void AnernSolarEvo::queue_command_(const std::string &command, const std::string &query_command) {
   uint8_t next_position = command_queue_position_;
   for (uint8_t i = 0; i < COMMAND_QUEUE_LENGTH; i++) {
     uint8_t testposition = (next_position + i) % COMMAND_QUEUE_LENGTH;
-    if (command_queue_[testposition].empty()) {
-      command_queue_[testposition] = command;
-      ESP_LOGD(TAG, "Command queued successfully: %s with length %u at position %d", command,
-               command_queue_[testposition].length(), testposition);
+    if (command_queue_[testposition].command.empty()) {
+      command_queue_[testposition].command = command;
+      command_queue_[testposition].query_after = query_command;
+      ESP_LOGD(TAG, "Command queued successfully: %s at position %d", command.c_str(), testposition);
       return;
     }
   }
-  ESP_LOGD(TAG, "Command queue full dropping command: %s", command);
+  ESP_LOGD(TAG, "Command queue full dropping command: %s", command.c_str());
+}
+
+void AnernSolarEvo::switch_command(const std::string &command, const std::string &query_command) {
+  ESP_LOGD(TAG, "got command: %s with query: %s", command.c_str(), query_command.c_str());
+  queue_command_(command, query_command);
 }
 
 void AnernSolarEvo::switch_command(const std::string &command) {
   ESP_LOGD(TAG, "got command: %s", command.c_str());
-  queue_command_(command.c_str(), command.length());
+  queue_command_(command, "");
 }
 void AnernSolarEvo::dump_config() {
   ESP_LOGCONFIG(TAG, "AnernSolarEvo:\n"

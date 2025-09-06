@@ -11,11 +11,11 @@ void AnernSolarEvoSwitch::dump_config() { LOG_SWITCH("", "AnernSolarEvo Switch",
 void AnernSolarEvoSwitch::write_state(bool state) {
   if (state) {
     if (!this->on_command_.empty()) {
-      this->parent_->switch_command(this->on_command_);
+      this->parent_->switch_command(this->on_command_, this->query_command_);
     }
   } else {
     if (!this->off_command_.empty()) {
-      this->parent_->switch_command(this->off_command_);
+      this->parent_->switch_command(this->off_command_, this->query_command_);
     }
   }
 }

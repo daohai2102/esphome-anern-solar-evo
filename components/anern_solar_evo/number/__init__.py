@@ -28,6 +28,7 @@ AnernSolarEvoNumber = anern_solar_evo_ns.class_("AnernSolarEvoNumber", number.Nu
 TYPES = {
     CONF_BATTERY_UNDER_VOLTAGE: {
         "command": "PSDV%02.1f",
+        "query_command": "QPIRI",
         "min_value": 20.0,
         "max_value": 24.0,
         "step": 0.1,
@@ -36,6 +37,7 @@ TYPES = {
     },
     CONF_CURRENT_MAX_CHARGING_CURRENT: {
         "command": "MNCHGC0%02.0f",
+        "query_command": "QPIRI",
         "min_value": 10.0,
         "max_value": 90.0,
         "step": 10.0,
@@ -44,6 +46,7 @@ TYPES = {
     },
     CONF_CURRENT_MAX_AC_CHARGING_CURRENT: {
         "command": "MUCHGC0%02.0f",
+        "query_command": "QPIRI",
         "min_value": 2.0,
         "max_value": 90.0,
         "step": 1.0,
@@ -52,6 +55,7 @@ TYPES = {
     },
     CONF_BATTERY_FLOAT_VOLTAGE: {
         "command": "PBFT%02.1f",
+        "query_command": "QPIRI",
         "min_value": 25.0,
         "max_value": 29.0,
         "step": 0.1,
@@ -60,6 +64,7 @@ TYPES = {
     },
     CONF_BATTERY_BULK_VOLTAGE: {
         "command": "PCVV%02.1f",
+        "query_command": "QPIRI",
         "min_value": 25.0,
         "max_value": 29.0,
         "step": 0.1,
@@ -68,6 +73,7 @@ TYPES = {
     },
     CONF_BATTERY_REDISCHARGE_VOLTAGE: {
         "command": "PBDV%02.1f",
+        "query_command": "QPIRI",
         "min_value": 24.0,
         "max_value": 29.0,
         "step": 0.5,
@@ -76,6 +82,7 @@ TYPES = {
     },
     CONF_BATTERY_RECHARGE_VOLTAGE: {
         "command": "PBCV%02.1f",
+        "query_command": "QPIRI",
         "min_value": 21.0,
         "max_value": 25.5,
         "step": 0.5,
@@ -118,3 +125,4 @@ async def to_code(config):
             cg.add(getattr(paren, f"set_{type}")(var))
             cg.add(var.set_parent(paren))
             cg.add(var.set_set_command(conf_data["command"]))
+            cg.add(var.set_query_command(conf_data["query_command"]))

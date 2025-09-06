@@ -31,6 +31,8 @@ struct PollingCommand {
   ENUMPollingCommand identifier;
 };
 
+struct CommandQueueItem { std::string command; std::string query_after; };
+
 #define ANERN_SOLAR_EVO_VALUED_ENTITY_(type, name, polling_command, value_type) \
  protected: \
   value_type value_##name##_; \
@@ -193,8 +195,7 @@ class AnernSolarEvo : public uart::UARTDevice, public PollingComponent {
   ANERN_SOLAR_EVO_TEXT_SENSOR(last_qmn, QMN)
   ANERN_SOLAR_EVO_TEXT_SENSOR(last_qid, QID)
 
-  // ANERN_SOLAR_EVO_SWITCH(pv_ok_condition_for_parallel_switch, QPIRI)
-
+  void switch_command(const std::string &command, const std::string &query_command);
   void switch_command(const std::string &command);
   void setup() override;
   void loop() override;
@@ -221,11 +222,13 @@ class AnernSolarEvo : public uart::UARTDevice, public PollingComponent {
   uint16_t anern_solar_crc__evo(uint8_t *msg, uint8_t len);
   uint8_t send_next_command_();
   void send_next_poll_();
-  void queue_command_(const char *command, uint8_t length);
-  std::string command_queue_[COMMAND_QUEUE_LENGTH];
+  void send_specific_poll_(const std::string &command);
+  void queue_command_(const std::string &command, const std::string &query_command);
+  CommandQueueItem command_queue_[COMMAND_QUEUE_LENGTH];
   uint8_t command_queue_position_ = 0;
   uint8_t read_buffer_[ANERN_SOLAR_EVO_READ_BUFFER_LENGTH];
   size_t read_pos_{0};
+  std::string high_priority_poll_command_{""};
 
   uint32_t command_start_millis_ = 0;
   uint8_t state_;

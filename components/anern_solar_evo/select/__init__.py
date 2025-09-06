@@ -16,6 +16,7 @@ CONF_PV_OK_CONDITION_FOR_PARALLEL = "pv_ok_condition_for_parallel"
 SELECT_TYPES = {
     CONF_OUTPUT_SOURCE_PRIORITY: {
         "command": "POP",
+        "query_command": "QPIRI",
         "options": {
             "USB (Utility first)": "00",
             "SUB (Solar + Utility first)": "01",
@@ -24,6 +25,7 @@ SELECT_TYPES = {
     },
     CONF_BATTERY_TYPE: {
         "command": "PBT",
+        "query_command": "QPIRI",
         "options": {
             "AGM (Absorbent Glass Mat)": "00",
             "FLD (Flooded)": "01",
@@ -35,6 +37,7 @@ SELECT_TYPES = {
     },
     CONF_INPUT_VOLTAGE_RANGE: {
         "command": "PGR",
+        "query_command": "QPIRI",
         "options": {
             "APL (Appliance: From 90V -> 280V)": "0",
             "UPS (USP: From 170V -> 280V)": "1",
@@ -42,6 +45,7 @@ SELECT_TYPES = {
     },
     CONF_CHARGER_SOURCE_PRIORITY: {
         "command": "PCP",
+        "query_command": "QPIRI",
         "options": {
             "CSO (Solar first)": "00",
             "SNU (Solar + Utility)": "01",
@@ -50,6 +54,7 @@ SELECT_TYPES = {
     },
     CONF_PV_POWER_BALANCE: {
         "command": "PSPB",
+        "query_command": "QPIRI",
         "options": {
             "Max charged power": "0",
             "Max charged power + load power": "1",
@@ -57,6 +62,7 @@ SELECT_TYPES = {
     },
     CONF_PV_OK_CONDITION_FOR_PARALLEL: {
         "command": "PPVOKC",
+        "query_command": "QPIRI",
         "options": {
             "One unit of inverters has connect PV": "0",
             "Only all of inverters have connect PV": "1",
@@ -86,6 +92,7 @@ async def to_code(config):
             cg.add(getattr(paren, f"set_{type}")(var))
             cg.add(var.set_parent(paren))
             cg.add(var.set_command(conf["command"]))
+            cg.add(var.set_query_command(conf["query_command"]))
             for key, val in conf["options"].items():
                 cg.add(var.add_option(key, val))
 
