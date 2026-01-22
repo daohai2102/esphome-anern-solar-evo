@@ -1,5 +1,6 @@
 #pragma once
 
+#include <map>
 #include "../anern_solar_evo.h"
 #include "esphome/components/select/select.h"
 
